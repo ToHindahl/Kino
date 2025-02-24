@@ -22,6 +22,12 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
         <!-- Spring Boot Starter für JPA & MySQL -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

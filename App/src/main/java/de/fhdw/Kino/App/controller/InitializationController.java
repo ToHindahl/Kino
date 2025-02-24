@@ -1,17 +1,18 @@
 package de.fhdw.Kino.App.controller;
 
-import de.fhdw.Kino.App.domain.Auffuehrung;
-import de.fhdw.Kino.App.domain.Film;
-import de.fhdw.Kino.App.domain.Kino;
+import de.fhdw.Kino.App.domain.*;
 import de.fhdw.Kino.App.repository.AuffuehrungRepository;
 import de.fhdw.Kino.App.repository.FilmRepository;
 import de.fhdw.Kino.App.repository.KinoRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/init")
@@ -67,24 +68,25 @@ public class InitializationController {
 // Erwartet wird ein JSON, in dem u.a. Startzeit, ein gültiger Film (nur ID erforderlich)
 // und ein Kinosaal (ebenfalls referenziert über ID) übergeben werden.
     @PostMapping("/auffuehrung")
-    public ResponseEntity<Auffuehrung> initializeAuffuehrung(@RequestBody Auffuehrung auffuehrung) {
+    public ResponseEntity<?> initializeAuffuehrung(@RequestBody Auffuehrung auffuehrung) {
+
+        Optional<Film> optFilm = filmRepository.findById(auffuehrung.getFilm().getId());
+
+        if(optFilm.isEmpty()){
+            return ResponseEntity.badRequest().body("Film-ID nicht gefunden.");
+        }
+
+        if(auffuehrung.getStartzeit() == null){
+            return ResponseEntity.badRequest().body("Keine Startzeit angegeben.");
+        }
+
+        if(kinoRepository.findAll().get(0).getSaele().contains(auffuehrung.getSaal())){
+            return ResponseEntity.badRequest().body("Saal nicht gefunden.");
+        }
+
+
+
         Auffuehrung savedAuffuehrung = auffuehrungRepository.save(auffuehrung);
         return new ResponseEntity<>(savedAuffuehrung, HttpStatus.CREATED);
     }
-
-
-    // Endpunkt zum Hinzufügen mehrerer Filme
-    @PostMapping("/filme")
-    public ResponseEntity<List<Film>> initializeFilme(@RequestBody List<Film> filme) {
-        List<Film> savedFilme = filmRepository.saveAll(filme);
-        return new ResponseEntity<>(savedFilme, HttpStatus.CREATED);
-    }
-
-    // Endpunkt zum Hinzufügen mehrerer Aufführungen
-    @PostMapping("/auffuehrungen")
-    public ResponseEntity<List<Auffuehrung>> initializeAuffuehrungen(@RequestBody List<Auffuehrung> auffuehrungen) {
-        List<Auffuehrung> savedAuffuehrungen = auffuehrungRepository.saveAll(auffuehrungen);
-        return new ResponseEntity<>(savedAuffuehrungen, HttpStatus.CREATED);
-    }
-
 }
