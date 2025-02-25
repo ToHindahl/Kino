@@ -8,6 +8,8 @@ import de.fhdw.Kino.App.dto.ReservierungRequest;
 import de.fhdw.Kino.App.repository.AuffuehrungRepository;
 import de.fhdw.Kino.App.repository.KundeRepository;
 import de.fhdw.Kino.App.repository.ReservierungRepository;
+import de.fhdw.Kino.App.service.ReservierungService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +30,11 @@ public class ReservierungController {
     @Autowired
     private KundeRepository kundeRepository;
 
+    @Autowired
+    private ReservierungService reservierungService;
+
     @PostMapping
-    public ResponseEntity<?> createReservierung(@RequestBody ReservierungRequest req) {
+    public ResponseEntity<?> createReservierung(@Valid @RequestBody ReservierungRequest req) {
         Optional<Auffuehrung> auffOpt = auffuehrungRepository.findById(req.getAuffuehrungId());
         Optional<Kunde> kundeOpt = kundeRepository.findById(req.getKundeId());
         if(auffOpt.isEmpty() || kundeOpt.isEmpty()) {
@@ -40,6 +45,7 @@ public class ReservierungController {
         reservierung.setKunde(kundeOpt.get());
         reservierung.setSitzplatzIds(req.getSitzplatzIds());
         reservierung.setStatus(ReservierungsStatus.RESERVED);
+        reservierungService.createReservierung(req);
         return new ResponseEntity<>(reservierungRepository.save(reservierung), HttpStatus.CREATED);
     }
 
