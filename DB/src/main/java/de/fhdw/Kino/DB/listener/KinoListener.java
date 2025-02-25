@@ -1,4 +1,4 @@
-package de.fhdw.Kino.DB.listeners;
+package de.fhdw.Kino.DB.listener;
 
 import de.fhdw.Kino.DB.domain.Kino;
 import de.fhdw.Kino.DB.domain.Kinosaal;
@@ -7,14 +7,15 @@ import de.fhdw.Kino.DB.domain.Sitzplatz;
 import de.fhdw.Kino.DB.repositories.KinoRepository;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class KinoListener {
@@ -25,17 +26,23 @@ public class KinoListener {
     @RabbitListener(queues = "kino.create.queue")
     public CreationResponseDTO handleKinoCreation(KinoDTO dto) {
 
+        log.info("Kino creation request received");
+        log.info("Kino: " + dto.kinoName());
+
         if(!kinoRepository.findAll().isEmpty()) {
             return new CreationResponseDTO(-1L, StatusDTO.ERROR, "Kino bereits initialisiert");
         }
 
         Kino kino = new Kino();
+        kino.setKinoName(dto.kinoName());
 
         dto.kinoSaele().forEach(kinosaalDTO -> {
             Kinosaal kinosaal = new Kinosaal();
+            kinosaal.setKino(kino);
             kinosaal.setKinosaalName(kinosaalDTO.saalName());
             kinosaalDTO.reihen().forEach(r -> {
                 Reihe reihe = new Reihe();
+                reihe.setReiheSaal(kinosaal);
                 switch (r.reiheTyp()) {
                     case LOGE:
                         reihe.setReiheTyp(Reihe.ReihenTyp.LOGE);
@@ -44,6 +51,7 @@ public class KinoListener {
                 }
                 r.reiheSitze().forEach(s -> {
                     Sitzplatz sitzplatz = new Sitzplatz();
+                    sitzplatz.setSitzplatzReihe(reihe);
                     sitzplatz.setSitzplatzNummer(s.sitzplatzNummer());
                     reihe.getReiheSitze().add(sitzplatz);
                 });

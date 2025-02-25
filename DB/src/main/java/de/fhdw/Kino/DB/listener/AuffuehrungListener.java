@@ -1,4 +1,4 @@
-package de.fhdw.Kino.DB.listeners;
+package de.fhdw.Kino.DB.listener;
 
 import de.fhdw.Kino.DB.domain.Auffuehrung;
 import de.fhdw.Kino.DB.domain.Film;
@@ -12,7 +12,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

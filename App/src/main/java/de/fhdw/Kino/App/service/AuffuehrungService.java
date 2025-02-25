@@ -1,9 +1,8 @@
 package de.fhdw.Kino.App.service;
 
-import de.fhdw.Kino.App.producers.AuffuehrungProducer;
+import de.fhdw.Kino.App.producer.AuffuehrungProducer;
 import de.fhdw.Kino.Lib.dto.AuffuehrungDTO;
 import de.fhdw.Kino.Lib.dto.CreationResponseDTO;
-import de.fhdw.Kino.Lib.dto.GetAllAuffuehrungResponseDTO;
 import de.fhdw.Kino.Lib.dto.StatusDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

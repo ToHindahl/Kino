@@ -4,11 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Projektinformationen -->
     <groupId>de.fhdw</groupId>
     <artifactId>Kino</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <!-- Module des Projekts -->
     <modules>
         <module>Lib</module>
         <module>App</module>
@@ -16,15 +18,19 @@
         <module>Stats</module>
     </modules>
 
+    <!-- Eigenschaften für zentrale Konfiguration -->
     <properties>
         <maven.compiler.source>20</maven.compiler.source>
         <maven.compiler.target>20</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.boot.version>3.1.0</spring.boot.version>
+        <lombok.version>1.18.30</lombok.version>
     </properties>
 
+    <!-- Dependency Management für zentrale Abhängigkeitsversionen -->
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Boot BOM für Dependency Management -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -32,15 +38,16 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <!-- Lombok für Getter/Setter, Konstruktoren usw. -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.30</version>
+                <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
 
-            <!-- Lombok Annotation Processor -->
+            <!-- Lombok Annotation Processor für MapStruct -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-mapstruct-binding</artifactId>
@@ -50,21 +57,27 @@
         </dependencies>
     </dependencyManagement>
 
+    <!-- Build-Konfiguration -->
     <build>
         <plugins>
+            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.boot.version}</version> <!-- Version angeben -->
             </plugin>
+
+            <!-- Maven Compiler Plugin für Java 20 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>20</source> <!-- Direkt die Java-Version angeben -->
-                    <target>20</target> <!-- Und auch hier -->
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 </project>
+

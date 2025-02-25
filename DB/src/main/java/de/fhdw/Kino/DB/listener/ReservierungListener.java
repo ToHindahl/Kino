@@ -1,9 +1,8 @@
-package de.fhdw.Kino.DB.listeners;
+package de.fhdw.Kino.DB.listener;
 
 import de.fhdw.Kino.DB.domain.Auffuehrung;
 import de.fhdw.Kino.DB.domain.Kunde;
 import de.fhdw.Kino.DB.domain.Reservierung;
-import de.fhdw.Kino.DB.domain.Sitzplatz;
 import de.fhdw.Kino.DB.repositories.AuffuehrungRepository;
 import de.fhdw.Kino.DB.repositories.KinoRepository;
 import de.fhdw.Kino.DB.repositories.KundeRepository;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -34,13 +32,13 @@ public class ReservierungListener {
     @RabbitListener(queues = "reservierung.create.queue")
     public CreationResponseDTO handleReservierungCreation(ReservierungDTO dto) {
         Reservierung reservierung = new Reservierung();
-        Optional<Kunde> kunde = kundeRepository.findById(dto.reservierungKunde().kundeId());
+        Optional<Kunde> kunde = kundeRepository.findById(dto.reservierungKundeId());
         if(kunde.isEmpty()) {
             return new CreationResponseDTO(-1L, StatusDTO.ERROR, "Kunde nicht gefunden");
         }
         reservierung.setReservierungKunde(kunde.get());
 
-        Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(dto.reservierungAuffuehrung().auffuehrungId());
+        Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(dto.reservierungAuffuehrungId());
         if(auffuehrung.isEmpty()) {
             return new CreationResponseDTO(-1L, StatusDTO.ERROR, "Auffuehrung nicht gefunden");
         }
@@ -73,13 +71,17 @@ public class ReservierungListener {
 
         reservierung.setReservierungStatus(Reservierung.ReservierungsStatus.RESERVED);
 
-        switch (dto.reservierungStatus()) {
-            case RESERVED:
-                reservierung.setReservierungStatus(Reservierung.ReservierungsStatus.RESERVED);
-            case BOOKED:
-                reservierung.setReservierungStatus(Reservierung.ReservierungsStatus.BOOKED);
-            case CANCELLED:
-                reservierung.setReservierungStatus(Reservierung.ReservierungsStatus.CANCELLED);
+        if(dto.reservierungStatus() == null) {
+            reservierung.setReservierungStatus(Reservierung.ReservierungsStatus.RESERVED);
+        } else {
+            switch (dto.reservierungStatus()) {
+                case RESERVED:
+                    reservierung.setReservierungStatus(Reservierung.ReservierungsStatus.RESERVED);
+                case BOOKED:
+                    reservierung.setReservierungStatus(Reservierung.ReservierungsStatus.BOOKED);
+                case CANCELLED:
+                    reservierung.setReservierungStatus(Reservierung.ReservierungsStatus.CANCELLED);
+            }
         }
 
         reservierungRepository.save(reservierung);
@@ -128,5 +130,4 @@ public class ReservierungListener {
 
         return new BookReservierungResponseDTO(reservierung.get().getReservierungId(), StatusDTO.SUCCESS, "booked");
     }
-
 }

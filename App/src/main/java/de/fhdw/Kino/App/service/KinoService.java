@@ -1,6 +1,6 @@
 package de.fhdw.Kino.App.service;
 
-import de.fhdw.Kino.App.producers.KinoProducer;
+import de.fhdw.Kino.App.producer.KinoProducer;
 import de.fhdw.Kino.Lib.dto.CreationResponseDTO;
 import de.fhdw.Kino.Lib.dto.KinoDTO;
 import de.fhdw.Kino.Lib.dto.StatusDTO;

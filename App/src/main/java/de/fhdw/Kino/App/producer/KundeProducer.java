@@ -1,4 +1,4 @@
-package de.fhdw.Kino.App.producers;
+package de.fhdw.Kino.App.producer;
 
 import de.fhdw.Kino.Lib.dto.CreationResponseDTO;
 import de.fhdw.Kino.Lib.dto.KundeDTO;

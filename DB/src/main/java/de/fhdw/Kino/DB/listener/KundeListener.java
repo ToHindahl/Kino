@@ -1,10 +1,8 @@
-package de.fhdw.Kino.DB.listeners;
+package de.fhdw.Kino.DB.listener;
 
-import de.fhdw.Kino.DB.domain.Film;
 import de.fhdw.Kino.DB.domain.Kunde;
 import de.fhdw.Kino.DB.repositories.KundeRepository;
 import de.fhdw.Kino.Lib.dto.CreationResponseDTO;
-import de.fhdw.Kino.Lib.dto.FilmDTO;
 import de.fhdw.Kino.Lib.dto.KundeDTO;
 import de.fhdw.Kino.Lib.dto.StatusDTO;
 import lombok.RequiredArgsConstructor;

@@ -4,76 +4,51 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Vererbung vom Eltern-POM -->
     <parent>
         <groupId>de.fhdw</groupId>
         <artifactId>Kino</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>  <!-- Relative path to the parent POM -->
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <!-- Modulinformationen -->
     <artifactId>App</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-        <maven.compiler.source>20</maven.compiler.source> <!-- Ensure consistency with other modules -->
-        <maven.compiler.target>20</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
+    <!-- Abhängigkeiten -->
     <dependencies>
+        <!-- Lombok für Getter/Setter, Konstruktoren usw. -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
+        <!-- Spring Boot Starter für Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Starter für RabbitMQ -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
-
+        <!-- Jakarta Validation API -->
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.0.2</version>
         </dependency>
 
-        <!-- Spring Boot Starter für JPA & MySQL -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-
-        <!-- Gemeinsame DTOs aus lib-Modul -->
+        <!-- Gemeinsame DTOs aus dem Lib-Modul -->
         <dependency>
             <groupId>de.fhdw</groupId>
             <artifactId>Lib</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
-        <!-- JSON-Serialisierung (falls nicht im Parent definiert) -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>

@@ -1,4 +1,4 @@
-package de.fhdw.Kino.DB.listeners;
+package de.fhdw.Kino.DB.listener;
 
 import de.fhdw.Kino.DB.domain.Film;
 import de.fhdw.Kino.DB.repositories.FilmRepository;

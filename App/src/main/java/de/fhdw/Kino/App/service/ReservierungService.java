@@ -1,6 +1,6 @@
 package de.fhdw.Kino.App.service;
 
-import de.fhdw.Kino.App.producers.ReservierungProducer;
+import de.fhdw.Kino.App.producer.ReservierungProducer;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class ReservierungService {
             throw new RuntimeException(response.message());
         }
 
-        return new ReservierungDTO(response.id(), dto.reservierungSitzplatzIds(), dto.reservierungAuffuehrung(), dto.reservierungKunde(), dto.reservierungStatus());
+        return new ReservierungDTO(response.id(), dto.reservierungSitzplatzIds(), dto.reservierungAuffuehrungId(), dto.reservierungKundeId(), dto.reservierungStatus());
 
     }
 
