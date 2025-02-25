@@ -1,21 +1,33 @@
 package de.fhdw.Kino.App.service;
 
-import de.fhdw.Kino.App.domain.Film;
-import de.fhdw.Kino.App.dto.FilmDto;
-import de.fhdw.Kino.App.repository.FilmRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.fhdw.Kino.App.producers.FilmProducer;
+import de.fhdw.Kino.Lib.dto.CreationResponseDTO;
+import de.fhdw.Kino.Lib.dto.FilmDTO;
+import de.fhdw.Kino.Lib.dto.StatusDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 public class FilmService {
 
-    @Autowired
-    private FilmRepository filmRepository;
+    private final FilmProducer filmProducer;
 
-    public Film createFilm(FilmDto filmDto){
-        Film film = new Film();
-        film.setId(filmDto.getId());
-        film.setTitel(filmDto.getTitel());
-        return filmRepository.save(film);
+    public FilmDTO createFilm(FilmDTO filmDto){
+
+        CreationResponseDTO response = filmProducer.createFilm(filmDto);
+
+        if(response.status().equals(StatusDTO.ERROR)) {
+            throw new RuntimeException(response.message());
+        }
+
+        return new FilmDTO(response.id(), filmDto.filmTitel());
     }
+
+    public List<FilmDTO> getAllFilme() {
+        return filmProducer.getAllFilme().filme();
+    }
+
 }

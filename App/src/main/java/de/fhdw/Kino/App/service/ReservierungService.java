@@ -1,46 +1,49 @@
 package de.fhdw.Kino.App.service;
 
-import de.fhdw.Kino.App.domain.Auffuehrung;
-import de.fhdw.Kino.App.domain.Kunde;
-import de.fhdw.Kino.App.domain.Reservierung;
-import de.fhdw.Kino.App.domain.ReservierungsStatus;
-import de.fhdw.Kino.App.dto.ReservierungRequest;
-import de.fhdw.Kino.App.repository.AuffuehrungRepository;
-import de.fhdw.Kino.App.repository.KundeRepository;
-import de.fhdw.Kino.App.repository.ReservierungRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import de.fhdw.Kino.App.producers.ReservierungProducer;
+import de.fhdw.Kino.Lib.dto.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ReservierungService {
 
-    @Autowired
-    private ReservierungRepository reservierungRepository;
+    private final ReservierungProducer reservierungProducer;
 
-    @Autowired
-    private AuffuehrungRepository auffuehrungRepository;
+    public ReservierungDTO createReservierung(ReservierungDTO dto) {
 
-    @Autowired
-    private KundeRepository kundeRepository;
+        CreationResponseDTO response = reservierungProducer.createReservierung(dto);
 
-    public Reservierung createReservierung(ReservierungRequest request) {
-        Optional<Auffuehrung> auffOpt = auffuehrungRepository.findById(request.getAuffuehrungId());
-        Optional<Kunde> kundeOpt = kundeRepository.findById(request.getKundeId());
-        if(auffOpt.isEmpty() || kundeOpt.isEmpty()) {
-            throw HttpClientErrorException.create(HttpStatus.BAD_REQUEST, "Ungültige Aufführungs- oder Kunden-ID.", null, null, null);
+        if(response.status().equals(StatusDTO.ERROR)) {
+            throw new RuntimeException(response.message());
         }
-        Reservierung reservierung = new Reservierung();
-        reservierung.setAuffuehrung(auffOpt.get());
-        reservierung.setKunde(kundeOpt.get());
-        reservierung.setSitzplatzIds(request.getSitzplatzIds());
-        reservierung.setStatus(ReservierungsStatus.RESERVED);
-        return reservierungRepository.save(reservierung);
+
+        return new ReservierungDTO(response.id(), dto.reservierungSitzplatzIds(), dto.reservierungAuffuehrung(), dto.reservierungKunde(), dto.reservierungStatus());
+
     }
+
+    public BookReservierungResponseDTO bookReservierung(Long id) {
+
+        BookReservierungResponseDTO response = reservierungProducer.bookReservierung(new BookReservierungRequestDTO(id));
+
+        if(response.status().equals(StatusDTO.ERROR)) {
+            throw new RuntimeException(response.message());
+        }
+
+        return response;
+    }
+
+    public CancelReservierungResponseDTO cancelReservierung(Long id) {
+
+        CancelReservierungResponseDTO response = reservierungProducer.cancelReservierung(new CancelReservierungRequestDTO(id));
+
+        if(response.status().equals(StatusDTO.ERROR)) {
+            throw new RuntimeException(response.message());
+        }
+
+        return response;
+    }
+
 
 }

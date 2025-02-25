@@ -1,23 +1,26 @@
 package de.fhdw.Kino.App.service;
 
-import de.fhdw.Kino.App.domain.Kunde;
-import de.fhdw.Kino.App.dto.KundeDto;
-import de.fhdw.Kino.App.repository.KundeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.fhdw.Kino.App.producers.KundeProducer;
+import de.fhdw.Kino.Lib.dto.CreationResponseDTO;
+import de.fhdw.Kino.Lib.dto.KundeDTO;
+import de.fhdw.Kino.Lib.dto.StatusDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class KundeService {
 
-    @Autowired
-    private KundeRepository kundeRepository;
+    private final KundeProducer kundeProducer;
 
-    public Kunde createKunde(KundeDto kundeDto){
-        Kunde kunde = new Kunde();
-        kunde.setId(kundeDto.getId());
-        kunde.setVorname(kundeDto.getVorname());
-        kunde.setNachname(kundeDto.getNachname());
-        kunde.setEmail(kundeDto.getEmail());
-        return kundeRepository.save(kunde);
+    public KundeDTO createKunde(KundeDTO kundeDto){
+
+        CreationResponseDTO response = kundeProducer.createKunde(kundeDto);
+
+        if(response.status().equals(StatusDTO.ERROR)) {
+            throw new RuntimeException(response.message());
+        }
+
+        return new KundeDTO(response.id(), kundeDto.kundeVorname(), kundeDto.kundeNachname(), kundeDto.kundeEmail());
     }
 }

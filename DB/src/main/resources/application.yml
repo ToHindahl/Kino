@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./kino-db # H2-Datenbank (kann durch MySQL/PostgreSQL ersetzt werden)
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update # Automatisches Schema-Update
+    show-sql: true # SQL-Ausgaben in der Konsole anzeigen
+    properties:
+      hibernate:
+        format_sql: true # SQL-Ausgaben formatieren
+  rabbitmq:
+    host: 192.168.0.45 # Externe IP des Servers, auf dem RabbitMQ läuft
+    port: 5672 # RabbitMQ-Port
+    username: admin # RabbitMQ-Benutzername (wie im Docker-Befehl festgelegt)
+    password: securepassword # RabbitMQ-Passwort (wie im Docker-Befehl festgelegt)
+
+# Logging-Konfiguration (optional)
+logging:
+  level:
+    org.springframework: INFO
+    com.kino: DEBUG
