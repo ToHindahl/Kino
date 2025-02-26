@@ -1,6 +1,7 @@
 package de.fhdw.Kino.App.controller;
 
 import de.fhdw.Kino.App.service.AuffuehrungService;
+import de.fhdw.Kino.App.service.FilmService;
 import de.fhdw.Kino.Lib.dto.AuffuehrungDTO;
 import de.fhdw.Kino.Lib.dto.FilmDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,15 @@ public class VorstellungController {
 
     @Autowired
     private AuffuehrungService auffuehrungService;
+    @Autowired
+    private FilmService filmService;
 
     @GetMapping
     public Double getVorstellungen(
             @RequestParam(name = "datum", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datum) {
 
-        //TODO
-
+        //TODO --> Pair<>, MutablePair<>?
+        List<FilmDTO> filmDTOs = filmService.getAllFilme();
         List<AuffuehrungDTO> auffuehrungDTOs = auffuehrungService.getAllAuffuehrungen();
 
         if(datum != null) {
