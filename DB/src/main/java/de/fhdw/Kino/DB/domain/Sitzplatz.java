@@ -2,6 +2,7 @@ package de.fhdw.Kino.DB.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import de.fhdw.Kino.Lib.dto.SitzplatzDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -16,10 +17,14 @@ public class Sitzplatz {
     private Long sitzplatzId;
 
     @Min(value = 1, message = "Die Nummer muss mindestens 1 sein.")
-    private int sitzplatzNummer;
+    private int nummer;
 
     @ManyToOne
     @JoinColumn(name = "reihe_id")
-    @NotNull(message = "Reihe darf nicht leer sein.")
-    private Reihe sitzplatzReihe;
+    @NotNull(message = "Sitzreihe darf nicht leer sein.")
+    private Sitzreihe sitzreihe;
+
+    public SitzplatzDTO toDTO() {
+        return new SitzplatzDTO(this.sitzplatzId, this.nummer, this.sitzreihe.toDTO());
+    }
 }

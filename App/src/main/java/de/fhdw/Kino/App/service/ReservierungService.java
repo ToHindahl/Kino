@@ -19,7 +19,7 @@ public class ReservierungService {
             throw new RuntimeException(response.message());
         }
 
-        return new ReservierungDTO(response.id(), dto.reservierungSitzplatzIds(), dto.reservierungAuffuehrungId(), dto.reservierungKundeId(), dto.reservierungStatus());
+        return new ReservierungDTO(response.id(), dto.sitzplatzIds(), dto.auffuehrungId(), dto.kundeId(), dto.reservierungsStatus());
 
     }
 

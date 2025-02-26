@@ -24,7 +24,7 @@ public class AuffuehrungService {
             throw new RuntimeException(response.message());
         }
 
-        return new AuffuehrungDTO(response.id(), auffuehrungDto.auffuehrungStartzeit(), auffuehrungDto.auffuehrungFilmId(), auffuehrungDto.auffuehrungSaalId());
+        return new AuffuehrungDTO(response.id(), auffuehrungDto.startzeit(), auffuehrungDto.filmId(), auffuehrungDto.kinosaalId());
     }
 
     public List<AuffuehrungDTO> getAllAuffuehrungen() {

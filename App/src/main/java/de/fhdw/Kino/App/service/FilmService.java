@@ -23,7 +23,7 @@ public class FilmService {
             throw new RuntimeException(response.message());
         }
 
-        return new FilmDTO(response.id(), filmDto.filmTitel());
+        return new FilmDTO(response.id(), filmDto.titel());
     }
 
     public List<FilmDTO> getAllFilme() {

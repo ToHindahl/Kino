@@ -3,6 +3,7 @@ package de.fhdw.Kino.DB.domain;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import de.fhdw.Kino.Lib.dto.AuffuehrungDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -22,17 +23,23 @@ public class Auffuehrung {
     private Long auffuehrungId;
 
     @NotNull(message = "Startzeit darf nicht leer sein.")
-    private LocalDateTime auffuehrungStartzeit;
+    private LocalDateTime startzeit;
 
     @ManyToOne
     @JoinColumn(name = "film_id")
     @JsonIdentityReference(alwaysAsId = true)
     @NotNull(message = "Film-ID darf nicht leer sein.")
-    private Film auffuehrungFilm;
+    private Film film;
 
     @ManyToOne
     @JoinColumn(name = "kinosaal_id")
     @JsonIdentityReference(alwaysAsId = true)
-    @NotNull(message = "Saal darf nicht leer sein.")
-    private Kinosaal auffuehrungSaal;
+    @NotNull(message = "Kinosaal darf nicht leer sein.")
+    private Kinosaal kinosaal;
+
+    //TODO JOIN der reservierten Sitzplätze
+
+    public AuffuehrungDTO toDTO() {
+        return new AuffuehrungDTO(this.auffuehrungId, this.startzeit, this.film.getFilmId(), this.kinosaal.getKinosaalId());
+    }
 }

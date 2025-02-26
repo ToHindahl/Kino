@@ -2,6 +2,7 @@ package de.fhdw.Kino.DB.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import de.fhdw.Kino.Lib.dto.FilmDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -18,6 +19,10 @@ public class Film {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long filmId;
 
-    @NotNull(message = "Filmtitel darf nicht leer sein.")
-    private String filmTitel;
+    @NotNull(message = "Titel darf nicht leer sein.")
+    private String titel;
+
+    public FilmDTO toDTO() {
+        return new FilmDTO(this.filmId, this.titel);
+    }
 }

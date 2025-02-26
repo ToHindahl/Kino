@@ -1,6 +1,6 @@
 package de.fhdw.Kino.Stats.listener;
 
-import de.fhdw.Kino.Lib.dto.CrudRequest;
+import de.fhdw.Kino.Lib.dto.CommandRequest;
 import de.fhdw.Kino.Stats.config.RabbitMQConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +17,10 @@ public class CrudListener {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @RabbitListener(queues = RabbitMQConfig.CRUD_STATS_QUEUE)
-    public void logCrudRequest(CrudRequest request) {
+    @RabbitListener(queues = RabbitMQConfig.COMMAND_STATS_QUEUE)
+    public void logCommandRequest(CommandRequest request) {
 
-        log.info("Stats-Modul: CRUD-Request empfangen - " + request.toString());
+        log.info("Stats-Modul: Command-Request empfangen - " + request.toString());
 
     }
 

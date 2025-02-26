@@ -1,7 +1,8 @@
-package de.fhdw.Kino.DB.listener;
+package de.fhdw.Kino.DB.service;
 
 import de.fhdw.Kino.DB.domain.Kunde;
 import de.fhdw.Kino.DB.repositories.KundeRepository;
+import de.fhdw.Kino.Lib.dto.CommandResponse;
 import de.fhdw.Kino.Lib.dto.CreationResponseDTO;
 import de.fhdw.Kino.Lib.dto.KundeDTO;
 import de.fhdw.Kino.Lib.dto.StatusDTO;
@@ -12,19 +13,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class KundeListener {
+public class KundeService {
 
     private final KundeRepository kundeRepository;
 
     @Transactional
-    @RabbitListener(queues = "kunde.create.queue")
-    public CreationResponseDTO handleKundeCreation(KundeDTO dto) {
+    public CommandResponse handleKundeCreation(KundeDTO dto) {
         Kunde kunde = new Kunde();
         kunde.setVorname(dto.vorname());
         kunde.setNachname(dto.nachname());
         kunde.setEmail(dto.email());
         kundeRepository.save(kunde);
-        return new CreationResponseDTO(kunde.getKundeId(), StatusDTO.SUCCESS, "success");
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "success", kunde.toDTO());
     }
 
 }

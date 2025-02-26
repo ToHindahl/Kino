@@ -21,6 +21,6 @@ public class KundeService {
             throw new RuntimeException(response.message());
         }
 
-        return new KundeDTO(response.id(), kundeDto.kundeVorname(), kundeDto.kundeNachname(), kundeDto.kundeEmail());
+        return new KundeDTO(response.id(), kundeDto.vorname(), kundeDto.nachname(), kundeDto.email());
     }
 }

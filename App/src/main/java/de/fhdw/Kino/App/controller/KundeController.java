@@ -17,6 +17,6 @@ public class KundeController {
 
     @PostMapping
     public ResponseEntity<KundeDTO> createKunde(@Valid @RequestBody KundeDTO kunde) {
-        return new ResponseEntity<>(new KundeDTO(kundeProducer.createKunde(kunde).id(), kunde.kundeVorname(), kunde.kundeNachname(), kunde.kundeEmail()), HttpStatus.CREATED);
+        return new ResponseEntity<>(new KundeDTO(kundeProducer.createKunde(kunde).id(), kunde.vorname(), kunde.nachname(), kunde.email()), HttpStatus.CREATED);
     }
 }

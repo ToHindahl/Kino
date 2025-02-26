@@ -10,64 +10,45 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-
     // Name des Fanout-Exchanges
-    public static final String CRUD_FANOUT_EXCHANGE = "crud.fanout.exchange";
+    public static final String COMMAND_FANOUT_EXCHANGE = "command.fanout.exchange";
 
     // Name der Queue für das Stats-Modul
-    public static final String CRUD_STATS_QUEUE = "crud.stats.queue";
-
-
+    public static final String COMMAND_STATS_QUEUE = "command.stats.queue";
 
     // Name der Queue für die DB-Verarbeitung
-    public static final String CRUD_DB_QUEUE = "crud.db.queue";
-
-    // Name der Queue für Antworten
-    public static final String CRUD_REPLY_QUEUE = "crud.reply.queue";
+    public static final String COMMAND_DB_QUEUE = "command.db.queue";
 
     // Bean für den Fanout-Exchange
     @Bean
-    public FanoutExchange crudFanoutExchange() {
-        return new FanoutExchange(CRUD_FANOUT_EXCHANGE);
+    public FanoutExchange commandFanoutExchange() {
+        return new FanoutExchange(COMMAND_FANOUT_EXCHANGE);
     }
 
     // Bean für die DB-Queue
     @Bean
-    public Queue crudDbQueue() {
-        return new Queue(CRUD_DB_QUEUE, true); // durable Queue
-    }
-
-    // Bean für die Antwort-Queue
-    @Bean
-    public Queue crudReplyQueue() {
-        return new Queue(CRUD_REPLY_QUEUE, true); // durable Queue
+    public Queue commandDbQueue() {
+        return new Queue(COMMAND_DB_QUEUE, true); // durable Queue
     }
 
     // Binding zwischen Fanout-Exchange und DB-Queue
     @Bean
     public Binding dbBinding() {
-        return BindingBuilder.bind(crudDbQueue())
-                .to(crudFanoutExchange());
+        return BindingBuilder.bind(commandDbQueue())
+                .to(commandFanoutExchange());
     }
 
-    // Binding zwischen Fanout-Exchange und Antwort-Queue
-    @Bean
-    public Binding replyBinding() {
-        return BindingBuilder.bind(crudReplyQueue())
-                .to(crudFanoutExchange());
-    }
     // Bean für die Stats-Queue
     @Bean
-    public Queue crudStatsQueue() {
-        return new Queue(CRUD_STATS_QUEUE, true); // durable Queue
+    public Queue commandStatsQueue() {
+        return new Queue(COMMAND_STATS_QUEUE, true); // durable Queue
     }
 
 
     // Binding zwischen Fanout-Exchange und Stats-Queue
     @Bean
     public Binding statsBinding() {
-        return BindingBuilder.bind(crudStatsQueue())
-                .to(crudFanoutExchange());
+        return BindingBuilder.bind(commandStatsQueue())
+                .to(commandFanoutExchange());
     }
-
 }
