@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -38,8 +39,12 @@ public class Auffuehrung {
     private Kinosaal kinosaal;
 
     //TODO JOIN der reservierten Sitzplätze
+    @OneToMany
+    @JoinColumn(name = "sitzplatz_id")
+    @JsonIdentityReference(alwaysAsId = true)
+    private List<Sitzplatz> reservierteSitzplaetze;
 
     public AuffuehrungDTO toDTO() {
-        return new AuffuehrungDTO(this.auffuehrungId, this.startzeit, this.film.getFilmId(), this.kinosaal.getKinosaalId());
+        return new AuffuehrungDTO(this.auffuehrungId, this.startzeit, this.film.getFilmId(), this.kinosaal.getKinosaalId(), this.reservierteSitzplaetze.stream().map(r -> r.getSitzplatzId()).toList());
     }
 }
