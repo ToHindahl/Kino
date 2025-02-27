@@ -29,13 +29,13 @@ public class Auffuehrung {
     private LocalDateTime endzeit;
 
     @ManyToOne
-    @JoinColumn(name = "film_id")
+    @JoinColumn(name = "FILM_ID")
     @JsonIdentityReference(alwaysAsId = true)
     @NotNull(message = "Film-ID darf nicht leer sein.")
     private Film film;
 
     @ManyToOne
-    @JoinColumn(name = "kinosaal_id")
+    @JoinColumn(name = "KINOSAAL_ID")
     @JsonIdentityReference(alwaysAsId = true)
     @NotNull(message = "Kinosaal darf nicht leer sein.")
     private Kinosaal kinosaal;

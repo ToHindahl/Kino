@@ -27,7 +27,7 @@ public class Kinosaal {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "kino_id")
+    @JoinColumn(name = "KINO_ID")
     @JsonIdentityReference(alwaysAsId = true)
     @NotNull(message = "Kino darf nicht leer sein.")
     private Kino kino; // Umbenannt von 'kinosaalKino' zu 'kino'
