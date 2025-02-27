@@ -4,63 +4,75 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Vererbung vom Eltern-POM -->
     <parent>
         <groupId>de.fhdw</groupId>
         <artifactId>Kino</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath> <!-- Relative path to the parent POM -->
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <!-- Modulinformationen -->
     <artifactId>DB</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-        <maven.compiler.source>20</maven.compiler.source> <!-- Ensure consistency with other modules -->
-        <maven.compiler.target>20</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
+    <!-- Abhängigkeiten -->
     <dependencies>
+        <!-- Lombok für Getter/Setter, Konstruktoren usw. -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Spring Boot Starter für RabbitMQ -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
-        <!-- Spring Boot Starter für JPA & MySQL -->
+        <!-- Spring Boot Starter für JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- MySQL Connector für runtime -->
+        <!-- MySQL Connector -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.2.0</version> <!-- Neueste stabile Version prüfen -->
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Gemeinsame DTOs aus lib-Modul -->
+        <!-- H2 In-Memory Datenbank für Tests -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Jakarta Validation API -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+        <!-- Gemeinsame DTOs aus dem Lib-Modul -->
         <dependency>
             <groupId>de.fhdw</groupId>
             <artifactId>Lib</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- JSON-Serialisierung (falls nicht im Parent definiert) -->
+        <!-- Jackson für JSON-Verarbeitung -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
