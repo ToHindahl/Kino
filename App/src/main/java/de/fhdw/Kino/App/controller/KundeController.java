@@ -9,18 +9,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/kunden")
+@RequestMapping("/api")
 public class KundeController {
 
     @Autowired
     private KundeService kundeService;
 
-    @PostMapping
+    @PostMapping("/kunde")
     public ResponseEntity<KundeDTO> createKunde(@Valid @RequestBody KundeDTO dto) {
         return new ResponseEntity<>(kundeService.createKunde(dto), HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/kunden")
     public ResponseEntity<?> getKunden() {
         return new ResponseEntity<>(kundeService.getAllKunden(), HttpStatus.OK);
     }

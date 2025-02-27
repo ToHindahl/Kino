@@ -1,10 +1,10 @@
 package de.fhdw.Kino.DB.service;
 
-import de.fhdw.Kino.DB.domain.Kino;
-import de.fhdw.Kino.DB.domain.Kinosaal;
-import de.fhdw.Kino.DB.domain.Sitzplatz;
-import de.fhdw.Kino.DB.domain.Sitzreihe;
-import de.fhdw.Kino.DB.repositories.KinoRepository;
+import de.fhdw.Kino.DB.model.Kino;
+import de.fhdw.Kino.DB.model.Kinosaal;
+import de.fhdw.Kino.DB.model.Sitzplatz;
+import de.fhdw.Kino.DB.model.Sitzreihe;
+import de.fhdw.Kino.DB.repository.*;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,14 @@ import java.util.Optional;
 public class KinoService {
 
     private final KinoRepository kinoRepository;
+
+    private final KundeRepository kundeRepository;
+
+    private final ReservierungRepository reservierungRepository;
+
+    private final AuffuehrungRepository auffuehrungRepository;
+
+    private final FilmRepository filmRepository;
 
     @Transactional
     public CommandResponse handleKinoCreation(KinoDTO dto) {
@@ -36,13 +44,11 @@ public class KinoService {
             kinosaalDTO.getSitzreihen().forEach(r -> {
                 Sitzreihe sitzreihe = new Sitzreihe();
                 sitzreihe.setKinosaal(kinosaal);
+                sitzreihe.setBezeichnung(r.getBezeichnung());
                 switch (r.getSitzreihenTyp()) {
-                    case LOGE_MIT_SERVICE:
-                        sitzreihe.setSitzreihenTyp(Sitzreihe.SitzreihenTyp.LOGE_MIT_SERVICE);
-                    case LOGE:
-                        sitzreihe.setSitzreihenTyp(Sitzreihe.SitzreihenTyp.LOGE);
-                    case PARKETT:
-                        sitzreihe.setSitzreihenTyp(Sitzreihe.SitzreihenTyp.PARKETT);
+                    case LOGE_MIT_SERVICE -> sitzreihe.setSitzreihenTyp(Sitzreihe.SitzreihenTyp.LOGE_MIT_SERVICE);
+                    case LOGE -> sitzreihe.setSitzreihenTyp(Sitzreihe.SitzreihenTyp.LOGE);
+                    case PARKETT -> sitzreihe.setSitzreihenTyp(Sitzreihe.SitzreihenTyp.PARKETT);
                 }
                 r.getSitzplaetze().forEach(s -> {
                     Sitzplatz sitzplatz = new Sitzplatz();
@@ -58,15 +64,30 @@ public class KinoService {
         kinoRepository.save(kino);
 
         return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created","kino", kino.toDTO());
-
     }
 
     @Transactional
     public CommandResponse handleKinoRequest() {
+        if(kinoRepository.findAll().isEmpty()) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
+        }
+
         Optional<Kino> kino = Optional.ofNullable(kinoRepository.findAll().get(0));
         return kino.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "kino", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino nicht gefunden", "error", null));
+    }
 
+    @Transactional
+    public CommandResponse handleKinoReset() {
+        if(kinoRepository.findAll().isEmpty()) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
+        }
 
+        kinoRepository.deleteAll();
+        kundeRepository.deleteAll();
+        reservierungRepository.deleteAll();
+        auffuehrungRepository.deleteAll();
+        filmRepository.deleteAll();
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "reset", "");
     }
 
 }

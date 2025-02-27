@@ -18,7 +18,6 @@ public class AuffuehrungService {
 
     public AuffuehrungDTO createAuffuehrung(AuffuehrungDTO dto){
 
-
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.CREATE_AUFFUEHRUNG, "auffuehrung", dto));
 
         if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
@@ -38,4 +37,16 @@ public class AuffuehrungService {
 
         return (List<AuffuehrungDTO>) response.getEntity();
     }
+
+    public void deleteAuffuehrung(Long id) {
+
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.DELETE_AUFFUEHRUNG, "id", id));
+
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
+        }
+    }
+
+
+
 }

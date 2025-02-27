@@ -52,17 +52,19 @@ public class CommandListener {
             response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "error",  null);
         }
 
-        log.info("Antwort erstellt: " + response);
-        // Sende die Antwort zurück
+        // Sende Response zurück an die App
         String replyTo = message.getMessageProperties().getReplyTo();
         String correlationId = message.getMessageProperties().getCorrelationId();
         if (replyTo != null && correlationId != null) {
             rabbitTemplate.convertAndSend(replyTo, response, m -> {
-                m.getMessageProperties().setCorrelationId(correlationId);
+                m.getMessageProperties().setCorrelationId(correlationId); // ✅ Korrelation beibehalten
                 return m;
             });
-        } else {
-            log.error("Keine replyTo-Queue oder correlationId angegeben!");
+            // Sende die Response auch an den Response-Exchange für Stats
+            rabbitTemplate.convertAndSend(RabbitMQConfig.RESPONSE_FANOUT_EXCHANGE, "", response, m -> {
+                m.getMessageProperties().setCorrelationId(correlationId); // ✅ Korrelation beibehalten
+                return m;
+            });
         }
     }
 
@@ -91,6 +93,9 @@ public class CommandListener {
                 case GET_RESERVIERUNGEN -> response = reservierungService.handleReservierungRequestAll();
                 case CANCEL_RESERVIERUNG -> response = reservierungService.handleReservierungCancelation(((Number) entity).longValue());
                 case BOOK_RESERVIERUNG -> response = reservierungService.handleReservierungBooking(((Number) entity).longValue());
+                case DELETE_AUFFUEHRUNG -> response = auffuehrungService.handleAuffuehrungDeletion(((Number) entity).longValue());
+                case DELETE_FILM -> response = filmService.handleFilmDeletion(((Number) entity).longValue());
+                case RESET -> response = kinoService.handleKinoReset();
                 default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "unbekanntes Objekt erhalten", "error", null);
             }
         } catch (Exception e) {
@@ -122,6 +127,9 @@ public class CommandListener {
                 }
                 case "auffuehrung" -> {
                     return objectMapper.convertValue(entityMap, AuffuehrungDTO.class);
+                }
+                case "id" -> {
+                    return objectMapper.convertValue(entityMap, Long.class);
                 }
                 default -> throw new IllegalArgumentException("Unbekannter Entity-Typ: " + entityType);
             }

@@ -20,6 +20,11 @@ public class AuffuehrungDTO implements Serializable {
     private LocalDateTime startzeit;
 
     @NonNull
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime endzeit;
+
+
+    @NonNull
     private Long filmId;
 
     @NonNull

@@ -26,7 +26,7 @@ public class KundeService {
 
     public List<KundeDTO> getAllKunden() {
 
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_KUNDEN, "", null));
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_KUNDEN, ""));
 
         if (response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.getMessage());

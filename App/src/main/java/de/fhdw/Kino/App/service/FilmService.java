@@ -26,12 +26,21 @@ public class FilmService {
 
     public List<FilmDTO> getAllFilme() {
 
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_FILME, "", null));
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_FILME, ""));
 
         if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.getMessage());
         }
 
         return (List<FilmDTO>) response.getEntity();
+    }
+
+    public void deleteFilm(Long id) {
+
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.DELETE_FILM, "id", id));
+
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
+        }
     }
 }

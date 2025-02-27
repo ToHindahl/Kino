@@ -1,7 +1,5 @@
 package de.fhdw.Kino.App.controller;
 
-import de.fhdw.Kino.App.service.AuffuehrungService;
-import de.fhdw.Kino.App.service.FilmService;
 import de.fhdw.Kino.App.service.KinoService;
 import de.fhdw.Kino.Lib.dto.KinoDTO;
 import jakarta.validation.Valid;
@@ -26,6 +24,12 @@ public class KinoController {
     @GetMapping
     public KinoDTO getKino() {
         return kinoService.getKino();
+    }
+
+    @DeleteMapping("/reset")
+    public ResponseEntity<Void> deleteKino() {
+        kinoService.deleteKino();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

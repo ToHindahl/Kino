@@ -19,6 +19,9 @@ public class SitzreiheDTO implements Serializable {
     private SitzreihenTypDTO sitzreihenTyp;
 
     @NonNull
+    private String bezeichnung;
+
+    @NonNull
     @JsonIgnore
     private KinosaalDTO kinosaal;
 
@@ -26,8 +29,14 @@ public class SitzreiheDTO implements Serializable {
     private List<SitzplatzDTO> sitzplaetze;
 
     public enum SitzreihenTypDTO {
-        LOGE_MIT_SERVICE,
-        LOGE,
-        PARKETT,
+        LOGE_MIT_SERVICE(15.0),
+        LOGE(10.0),
+        PARKETT(7.50);
+
+        public final Double price;
+
+        SitzreihenTypDTO(Double price) {
+            this.price = price;
+        }
     }
 }

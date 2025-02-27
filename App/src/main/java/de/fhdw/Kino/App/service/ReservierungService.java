@@ -46,17 +46,6 @@ public class ReservierungService {
         return (ReservierungDTO) response.getEntity();
     }
 
-    public List<ReservierungDTO> getReservierungenByAuffuehrung(Long id) {
-
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_RESERVIERUNGEN, "", null));
-
-        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.getMessage());
-        }
-
-        return ((List<ReservierungDTO>) response.getEntity()).stream().filter(r -> r.getAuffuehrungId().equals(id)).toList();
-    }
-
     public List<ReservierungDTO> getReservierungen() {
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_RESERVIERUNGEN, "", null));
@@ -67,7 +56,5 @@ public class ReservierungService {
 
         return (List<ReservierungDTO>) response.getEntity();
     }
-
-
 
 }

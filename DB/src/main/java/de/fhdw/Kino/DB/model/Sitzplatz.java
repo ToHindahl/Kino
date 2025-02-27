@@ -1,4 +1,4 @@
-package de.fhdw.Kino.DB.domain;
+package de.fhdw.Kino.DB.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -20,7 +20,7 @@ public class Sitzplatz {
     private int nummer;
 
     @ManyToOne
-    @JoinColumn(name = "reihe_id")
+    @JoinColumn(name = "REIHE_ID")
     @NotNull(message = "Sitzreihe darf nicht leer sein.")
     private Sitzreihe sitzreihe;
 

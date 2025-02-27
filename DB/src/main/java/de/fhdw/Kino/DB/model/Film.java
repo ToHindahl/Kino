@@ -1,4 +1,4 @@
-package de.fhdw.Kino.DB.domain;
+package de.fhdw.Kino.DB.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;

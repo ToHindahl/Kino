@@ -1,4 +1,4 @@
-package de.fhdw.Kino.DB.domain;
+package de.fhdw.Kino.DB.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
@@ -25,6 +25,9 @@ public class Auffuehrung {
     @NotNull(message = "Startzeit darf nicht leer sein.")
     private LocalDateTime startzeit;
 
+    @NotNull(message = "Startzeit darf nicht leer sein.")
+    private LocalDateTime endzeit;
+
     @ManyToOne
     @JoinColumn(name = "film_id")
     @JsonIdentityReference(alwaysAsId = true)
@@ -38,6 +41,6 @@ public class Auffuehrung {
     private Kinosaal kinosaal;
 
     public AuffuehrungDTO toDTO() {
-        return new AuffuehrungDTO(this.auffuehrungId, this.startzeit, this.film.getFilmId(), this.kinosaal.getKinosaalId());
+        return new AuffuehrungDTO(this.auffuehrungId, this.startzeit, this.endzeit, this.film.getFilmId(), this.kinosaal.getKinosaalId());
     }
 }

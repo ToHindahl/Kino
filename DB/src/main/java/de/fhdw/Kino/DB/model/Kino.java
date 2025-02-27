@@ -1,4 +1,4 @@
-package de.fhdw.Kino.DB.domain;
+package de.fhdw.Kino.DB.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -31,7 +31,7 @@ public class Kino {
         this.getKinosaele().forEach(kinosaal -> {
             KinosaalDTO kinosaalDTO = new KinosaalDTO(kinosaal.getKinosaalId(), kinosaal.getName(), kinoDTO, new ArrayList<>());
             kinosaal.getSitzreihen().forEach(reihe -> {
-                SitzreiheDTO sitzreiheDTO = new SitzreiheDTO(reihe.getSitzreiheId(), reihe.getSitzreihenTypDTO(), kinosaalDTO, new ArrayList<>());
+                SitzreiheDTO sitzreiheDTO = new SitzreiheDTO(reihe.getSitzreiheId(), reihe.getSitzreihenTypDTO(), reihe.getBezeichnung(), kinosaalDTO, new ArrayList<>());
 
                 reihe.getSitzplaetze().forEach(sitzplatz -> {
                     SitzplatzDTO sitzplatzDTO = new SitzplatzDTO(sitzplatz.getSitzplatzId(), sitzplatz.getNummer(), sitzreiheDTO);

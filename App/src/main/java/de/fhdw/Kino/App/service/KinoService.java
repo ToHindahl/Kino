@@ -32,4 +32,14 @@ public class KinoService {
         }
         return (KinoDTO) response.getEntity();
     }
+
+    public void deleteKino() {
+
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.RESET, "", null));
+
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
+        }
+    }
+
 }

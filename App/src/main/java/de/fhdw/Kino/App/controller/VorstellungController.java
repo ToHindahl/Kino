@@ -23,6 +23,24 @@ public class VorstellungController {
     @Autowired
     private FilmService filmService;
 
+    // Endpunkt zum Abrufen aller Filme
+    @GetMapping("/filme")
+    public List<FilmDTO> getFilme() {
+        return filmService.getAllFilme();
+    }
+
+    // Endpunkt zum Anlegen eines Films
+    @PostMapping("/film")
+    public ResponseEntity<FilmDTO> createFilm(@Valid @RequestBody FilmDTO film) {
+        return new ResponseEntity<>(filmService.createFilm(film), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/film/{id}")
+    public ResponseEntity<Void> deleteFilm(@PathVariable Long id) {
+        filmService.deleteFilm(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/auffuehrungen")
     public List<AuffuehrungDTO> getAuffuehrung(
             @RequestParam(name = "datum", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datum) {
@@ -35,23 +53,15 @@ public class VorstellungController {
         return auffuehrungDTOs;
     }
 
-    @GetMapping("/filme")
-    public List<FilmDTO> getFilme() {
-        return filmService.getAllFilme();
-    }
-
-    // Endpunkt zum Anlegen eines Films
-    @PostMapping("/film")
-    public ResponseEntity<FilmDTO> createFilm(@Valid @RequestBody FilmDTO film) {
-        return new ResponseEntity<>(filmService.createFilm(film), HttpStatus.CREATED);
-    }
-
-    // Endpunkt zum Anlegen einer Aufführung
-// Erwartet wird ein JSON, in dem u.a. Startzeit, ein gültiger Film (nur ID erforderlich)
-// und ein Kinosaal (ebenfalls referenziert über ID) übergeben werden.
     @PostMapping("/auffuehrung")
     public ResponseEntity<AuffuehrungDTO> createAuffuehrung(@Valid @RequestBody AuffuehrungDTO auffuehrung) {
         return new ResponseEntity<>(auffuehrungService.createAuffuehrung(auffuehrung), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/auffuehrung/{id}")
+    public ResponseEntity<Void> deleteAuffuehrung(@PathVariable Long id) {
+        auffuehrungService.deleteAuffuehrung(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

@@ -1,4 +1,4 @@
-package de.fhdw.Kino.DB.domain;
+package de.fhdw.Kino.DB.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -14,10 +14,13 @@ public class Kunde {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long kundeId;
+
     @NotNull(message = "Vorname darf nicht leer sein.")
     private String vorname;
+
     @NotNull(message = "Nachname darf nicht leer sein.")
     private String nachname;
+
     @NotNull(message = "E-Mail darf nicht leer sein.")
     private String email;
 

@@ -31,7 +31,10 @@ public class CommandRequest implements Serializable {
         GET_RESERVIERUNGEN,
         GET_KUNDEN,
         BOOK_RESERVIERUNG,
-        CANCEL_RESERVIERUNG
+        CANCEL_RESERVIERUNG,
+        DELETE_AUFFUEHRUNG,
+        DELETE_FILM,
+        RESET
     }
 
 }

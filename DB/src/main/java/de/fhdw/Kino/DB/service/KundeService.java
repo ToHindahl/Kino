@@ -1,14 +1,13 @@
 package de.fhdw.Kino.DB.service;
 
-import de.fhdw.Kino.DB.domain.Kunde;
-import de.fhdw.Kino.DB.repositories.KundeRepository;
+import de.fhdw.Kino.DB.model.Kunde;
+import de.fhdw.Kino.DB.repository.KinoRepository;
+import de.fhdw.Kino.DB.repository.KundeRepository;
 import de.fhdw.Kino.Lib.dto.CommandResponse;
 import de.fhdw.Kino.Lib.dto.KundeDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -16,8 +15,14 @@ public class KundeService {
 
     private final KundeRepository kundeRepository;
 
+    private final KinoRepository kinoRepository;
+
     @Transactional
     public CommandResponse handleKundeCreation(KundeDTO dto) {
+        if(kinoRepository.findAll().isEmpty()) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
+        }
+
         Kunde kunde = new Kunde();
         kunde.setVorname(dto.getVorname());
         kunde.setNachname(dto.getNachname());
@@ -28,10 +33,11 @@ public class KundeService {
 
     @Transactional
     public CommandResponse handleKundeRequestAll() {
-        Optional<Kunde> kunde = Optional.ofNullable(kundeRepository.findAll().get(0));
-        return kunde.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "kundenListe", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kunden nicht gefunden", "error", null));
+        if(kinoRepository.findAll().isEmpty()) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
+        }
 
-
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"found", "kundenListe", kundeRepository.findAll().stream().map(Kunde::toDTO).toList());
     }
 
 }

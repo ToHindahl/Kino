@@ -31,10 +31,17 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
+
+        <!-- Spring Boot Starter für Rest Service -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
         <!-- Spring Boot Starter für Couchbase -->
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-couchbase</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-couchbase</artifactId>
         </dependency>
 
         <!-- Spring Boot Starter für JPA -->

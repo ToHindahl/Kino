@@ -1,19 +1,20 @@
 package de.fhdw.Kino.DB.service;
 
-import de.fhdw.Kino.DB.domain.Auffuehrung;
-import de.fhdw.Kino.DB.domain.Kunde;
-import de.fhdw.Kino.DB.domain.Reservierung;
-import de.fhdw.Kino.DB.repositories.AuffuehrungRepository;
-import de.fhdw.Kino.DB.repositories.KundeRepository;
-import de.fhdw.Kino.DB.repositories.ReservierungRepository;
+import de.fhdw.Kino.DB.model.Auffuehrung;
+import de.fhdw.Kino.DB.model.Kunde;
+import de.fhdw.Kino.DB.model.Reservierung;
+import de.fhdw.Kino.DB.repository.AuffuehrungRepository;
+import de.fhdw.Kino.DB.repository.KinoRepository;
+import de.fhdw.Kino.DB.repository.KundeRepository;
+import de.fhdw.Kino.DB.repository.ReservierungRepository;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -27,8 +28,14 @@ public class ReservierungService {
 
     private final AuffuehrungRepository auffuehrungRepository;
 
+    private final KinoRepository kinoRepository;
+
     @Transactional
     public CommandResponse handleReservierungCreation(ReservierungDTO dto) {
+        if(kinoRepository.findAll().isEmpty()) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
+        }
+
         Reservierung reservierung = new Reservierung();
         Optional<Kunde> kunde = kundeRepository.findById(dto.getKundeId());
         if(kunde.isEmpty()) {
@@ -38,7 +45,11 @@ public class ReservierungService {
 
         Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(dto.getAuffuehrungId());
         if(auffuehrung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Auffuehrung nicht gefunden", "error", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Aufführung nicht gefunden", "error", null);
+        }
+
+        if(auffuehrung.get().getStartzeit().isAfter(LocalDateTime.now())) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Aufführung bereits gestartet", "error", null);
         }
 
         reservierung.setAuffuehrung(auffuehrung.get());
@@ -66,18 +77,13 @@ public class ReservierungService {
 
         reservierung.setSitzplatzIds(dto.getSitzplatzIds());
 
-        reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.RESERVED);
-
         if(dto.getReservierungsStatus() == null) {
             reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.RESERVED);
         } else {
             switch (dto.getReservierungsStatus()) {
-                case RESERVED:
-                    reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.RESERVED);
-                case BOOKED:
-                    reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.BOOKED);
-                case CANCELLED:
-                    reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.CANCELLED);
+                case RESERVED -> reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.RESERVED);
+                case BOOKED -> reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.BOOKED);
+                case CANCELLED -> reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.CANCELLED);
             }
         }
 
@@ -90,6 +96,9 @@ public class ReservierungService {
 
     @Transactional
     public CommandResponse handleReservierungCancelation(Long id) {
+        if(kinoRepository.findAll().isEmpty()) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
+        }
 
         Optional<Reservierung> reservierung = reservierungRepository.findById(id);
 
@@ -110,6 +119,9 @@ public class ReservierungService {
 
     @Transactional
     public CommandResponse handleReservierungBooking(Long id) {
+        if(kinoRepository.findAll().isEmpty()) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
+        }
 
         Optional<Reservierung> reservierung = reservierungRepository.findById(id);
 
@@ -130,9 +142,11 @@ public class ReservierungService {
 
     @Transactional
     public CommandResponse handleReservierungRequestAll() {
-        List<ReservierungDTO> reservierungen = new ArrayList<>();
-        reservierungRepository.findAll().forEach(reservierung -> reservierungen.add(reservierung.toDTO()));
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "reservierungsListe", reservierungen);
+        if(kinoRepository.findAll().isEmpty()) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
+        }
+
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"found", "reservierungsListe", reservierungRepository.findAll().stream().map(Reservierung::toDTO).toList());
     }
 
 }

@@ -1,4 +1,4 @@
-package de.fhdw.Kino.DB.domain;
+package de.fhdw.Kino.DB.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -24,12 +24,12 @@ public class Reservierung {
     private List<Long> sitzplatzIds = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "auffuehrung_id")
+    @JoinColumn(name = "AUFFUEHRUNG_ID")
     @NotNull(message = "Aufführung darf nicht leer sein.")
     private Auffuehrung auffuehrung;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "kunde_id")
+    @JoinColumn(name = "KUNDE_ID")
     @NotNull(message = "Kunde darf nicht leer sein.")
     private Kunde kunde;
 

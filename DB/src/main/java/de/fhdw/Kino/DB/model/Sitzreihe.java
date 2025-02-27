@@ -1,4 +1,4 @@
-package de.fhdw.Kino.DB.domain;
+package de.fhdw.Kino.DB.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -22,8 +22,11 @@ public class Sitzreihe {
     @NotNull(message = "Reihentyp darf nicht leer sein.")
     private SitzreihenTyp sitzreihenTyp;
 
+    @NotNull(message = "Bezeichnung darf nicht leer sein.")
+    private String bezeichnung;
+
     @ManyToOne
-    @JoinColumn(name = "kinosaal_id")
+    @JoinColumn(name = "KINOSAAL_ID")
     @NotNull(message = "Kinosaal darf nicht leer sein.")
     private Kinosaal kinosaal;
 
@@ -46,6 +49,6 @@ public class Sitzreihe {
     }
 
     public SitzreiheDTO toDTO() {
-        return new SitzreiheDTO(this.sitzreiheId, this.getSitzreihenTypDTO(), this.kinosaal.toDTO(), this.sitzplaetze.stream().map(Sitzplatz::toDTO).toList());
+        return new SitzreiheDTO(this.sitzreiheId, this.getSitzreihenTypDTO(), this.bezeichnung, this.kinosaal.toDTO(), this.sitzplaetze.stream().map(Sitzplatz::toDTO).toList());
     }
 }
