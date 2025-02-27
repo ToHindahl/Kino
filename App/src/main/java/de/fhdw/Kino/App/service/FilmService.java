@@ -1,9 +1,7 @@
 package de.fhdw.Kino.App.service;
 
-import de.fhdw.Kino.App.producer.FilmProducer;
-import de.fhdw.Kino.Lib.dto.CreationResponseDTO;
-import de.fhdw.Kino.Lib.dto.FilmDTO;
-import de.fhdw.Kino.Lib.dto.StatusDTO;
+import de.fhdw.Kino.App.producer.CommandProducer;
+import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,21 +11,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilmService {
 
-    private final FilmProducer filmProducer;
+    private final CommandProducer commandProducer;
 
-    public FilmDTO createFilm(FilmDTO filmDto){
+    public FilmDTO createFilm(FilmDTO dto){
 
-        CreationResponseDTO response = filmProducer.createFilm(filmDto);
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.CREATE_FILM, "film", dto));
 
-        if(response.status().equals(StatusDTO.ERROR)) {
+        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.message());
         }
 
-        return new FilmDTO(response.id(), filmDto.titel());
+        return (FilmDTO) response.entity();
     }
 
     public List<FilmDTO> getAllFilme() {
-        return filmProducer.getAllFilme().filme();
-    }
 
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_FILME, "", null));
+
+        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.message());
+        }
+
+        return (List<FilmDTO>) response.entity();
+    }
 }

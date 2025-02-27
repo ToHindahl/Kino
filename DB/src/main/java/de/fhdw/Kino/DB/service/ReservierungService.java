@@ -9,13 +9,16 @@ import de.fhdw.Kino.DB.repositories.KundeRepository;
 import de.fhdw.Kino.DB.repositories.ReservierungRepository;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ReservierungService {
@@ -31,13 +34,13 @@ public class ReservierungService {
         Reservierung reservierung = new Reservierung();
         Optional<Kunde> kunde = kundeRepository.findById(dto.kundeId());
         if(kunde.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kunde nicht gefunden", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kunde nicht gefunden", "error", null);
         }
         reservierung.setKunde(kunde.get());
 
         Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(dto.auffuehrungId());
         if(auffuehrung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Auffuehrung nicht gefunden", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Auffuehrung nicht gefunden", "error", null);
         }
 
         reservierung.setAuffuehrung(auffuehrung.get());
@@ -53,15 +56,14 @@ public class ReservierungService {
         });
 
         ArrayList<Long> reservierteSitzplaetze = new ArrayList<>();
-        reservierungRepository.findAll().stream().filter(r -> r.getAuffuehrung() == auffuehrung.get()).forEach(r -> {
+        reservierungRepository.findAll().stream().filter(r -> r.getAuffuehrung() == auffuehrung.get() && !(r.getReservierungsStatusDTO().equals(ReservierungDTO.ReservierungsStatusDTO.CANCELLED))).forEach(r -> {
             reservierteSitzplaetze.addAll(r.getSitzplatzIds());
         });
 
         alleSitzplaetze.removeIf(reservierteSitzplaetze::contains);
 
-
         if(!alleSitzplaetze.containsAll(dto.sitzplatzIds())) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Sitzplatz nicht verfügbar", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Sitzplatz nicht verfügbar", "error", null);
         }
 
         reservierung.setSitzplatzIds(dto.sitzplatzIds());
@@ -83,46 +85,56 @@ public class ReservierungService {
 
         reservierungRepository.save(reservierung);
 
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created", reservierung.toDTO());
+        log.info("Reservierung erstellt: " + reservierung.toDTO());
+
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created", "reservierung", reservierung.toDTO());
     }
 
     @Transactional
-    public CommandResponse handleReservierungCancelation(CancelReservierungRequestDTO dto) {
+    public CommandResponse handleReservierungCancelation(ReservierungDTO dto) {
 
         Optional<Reservierung> reservierung = reservierungRepository.findById(dto.reservierungId());
 
         if(reservierung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung nicht gefunden", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung nicht gefunden", "error", null);
         }
 
         if(reservierung.get().getReservierungsStatus() != Reservierung.ReservierungsStatus.RESERVED) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung kann nicht storniert werden", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung kann nicht storniert werden", "error", null);
         }
 
         reservierung.get().setReservierungsStatus(Reservierung.ReservierungsStatus.CANCELLED);
 
         reservierungRepository.save(reservierung.get());
 
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "canceled", reservierung.get().toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "canceled", "reservierung", reservierung.get().toDTO());
     }
 
     @Transactional
-    public CommandResponse handleReservierungBooking(BookReservierungRequestDTO dto) {
+    public CommandResponse handleReservierungBooking(ReservierungDTO dto) {
 
         Optional<Reservierung> reservierung = reservierungRepository.findById(dto.reservierungId());
 
         if(reservierung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung nicht gefunden", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung nicht gefunden", "error", null);
         }
 
         if(reservierung.get().getReservierungsStatus() != Reservierung.ReservierungsStatus.RESERVED) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung kann nicht gebucht werden", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung kann nicht gebucht werden", "error", null);
         }
 
         reservierung.get().setReservierungsStatus(Reservierung.ReservierungsStatus.BOOKED);
 
         reservierungRepository.save(reservierung.get());
 
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "booked", reservierung.get().toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "booked", "reservierung", reservierung.get().toDTO());
     }
+
+    @Transactional
+    public CommandResponse handleReservierungRequestAll() {
+        List<ReservierungDTO> reservierungen = new ArrayList<>();
+        reservierungRepository.findAll().forEach(reservierung -> reservierungen.add(reservierung.toDTO()));
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "reservierungsListe", reservierungen);
+    }
+
 }

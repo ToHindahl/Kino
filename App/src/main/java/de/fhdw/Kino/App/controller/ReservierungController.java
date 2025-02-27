@@ -31,4 +31,14 @@ public class ReservierungController {
     public ResponseEntity<?> cancelReservierung(@PathVariable Long id) {
         return new ResponseEntity<>(reservierungService.cancelReservierung(id), HttpStatus.CREATED);
     }
+
+    @GetMapping("/auffuehrung/{id}")
+    public ResponseEntity<?> getReservierungenByAuffuehrung(@PathVariable Long id) {
+        return new ResponseEntity<>(reservierungService.getReservierungenByAuffuehrung(id), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getReservierungen() {
+        return new ResponseEntity<>(reservierungService.getReservierungen(), HttpStatus.OK);
+    }
 }

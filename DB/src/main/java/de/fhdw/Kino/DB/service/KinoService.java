@@ -25,7 +25,7 @@ public class KinoService {
     @Transactional
     public CommandResponse handleKinoCreation(KinoDTO dto) {
         if(!kinoRepository.findAll().isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino bereits initialisiert", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino bereits initialisiert", "error", null);
         }
 
         Kino kino = new Kino();
@@ -39,6 +39,8 @@ public class KinoService {
                 Sitzreihe sitzreihe = new Sitzreihe();
                 sitzreihe.setKinosaal(kinosaal);
                 switch (r.sitzreihenTyp()) {
+                    case LOGE_MIT_SERVICE:
+                        sitzreihe.setSitzreihenTyp(Sitzreihe.SitzreihenTyp.LOGE_MIT_SERVICE);
                     case LOGE:
                         sitzreihe.setSitzreihenTyp(Sitzreihe.SitzreihenTyp.LOGE);
                     case PARKETT:
@@ -57,7 +59,7 @@ public class KinoService {
 
         kinoRepository.save(kino);
 
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created", kino.toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created","kino", kino.toDTO());
 
     }
 
@@ -65,10 +67,10 @@ public class KinoService {
     public CommandResponse handleKinoRequest() {
         Optional<Kino> kino = Optional.ofNullable(kinoRepository.findAll().get(0));
         if (kino.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "Kino nicht gefunden", null);
+            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "Kino nicht gefunden", "error", null);
         }
 
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"success", kino.get().toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"success", "kino", kino.get().toDTO());
 
 
     }

@@ -28,14 +28,14 @@ public class AuffuehrungService {
         Auffuehrung auffuehrung = new Auffuehrung();
         Optional<Film> film = filmRepository.findById(dto.filmId());
         if(film.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Film nicht gefunden", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Film nicht gefunden", "error", null);
         }
 
         auffuehrung.setFilm(film.get());
 
         List<Kinosaal> alleKinosaele = kinoRepository.findAll().get(0).getKinosaele();
         if(!alleKinosaele.stream().map(Kinosaal::getKinosaalId).toList().contains(dto.kinosaalId())) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kinosaal existiert nicht", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kinosaal existiert nicht", "error", null);
         }
 
         auffuehrung.setKinosaal(alleKinosaele.stream().filter(kinosaal -> kinosaal.getKinosaalId().equals(dto.kinosaalId())).findFirst().get());
@@ -43,11 +43,11 @@ public class AuffuehrungService {
         auffuehrung.setStartzeit(dto.startzeit());
         auffuehrungRepository.save(auffuehrung);
 
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"created", auffuehrung.toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"created", "error", auffuehrung.toDTO());
     }
 
     @Transactional
     public CommandResponse handleAuffuehrungRequestAll() {
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "success", auffuehrungRepository.findAll().stream().map(Auffuehrung::toDTO).toList());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "success", "auffuehrungsListe", auffuehrungRepository.findAll().stream().map(Auffuehrung::toDTO).toList());
     }
 }

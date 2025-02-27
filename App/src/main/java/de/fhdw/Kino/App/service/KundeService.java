@@ -1,26 +1,37 @@
 package de.fhdw.Kino.App.service;
 
-import de.fhdw.Kino.App.producer.KundeProducer;
-import de.fhdw.Kino.Lib.dto.CreationResponseDTO;
-import de.fhdw.Kino.Lib.dto.KundeDTO;
-import de.fhdw.Kino.Lib.dto.StatusDTO;
+import de.fhdw.Kino.App.producer.CommandProducer;
+import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class KundeService {
 
-    private final KundeProducer kundeProducer;
+    private final CommandProducer commandProducer;
 
-    public KundeDTO createKunde(KundeDTO kundeDto){
+    public KundeDTO createKunde(KundeDTO dto){
 
-        CreationResponseDTO response = kundeProducer.createKunde(kundeDto);
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.CREATE_KUNDE, "kunde", dto));
 
-        if(response.status().equals(StatusDTO.ERROR)) {
+        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.message());
         }
 
-        return new KundeDTO(response.id(), kundeDto.vorname(), kundeDto.nachname(), kundeDto.email());
+        return (KundeDTO) response.entity();
+    }
+
+    public List<KundeDTO> getAllKunden() {
+
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_KUNDEN, "", null));
+
+        if (response.status().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.message());
+        }
+
+        return (List<KundeDTO>) response.entity();
     }
 }

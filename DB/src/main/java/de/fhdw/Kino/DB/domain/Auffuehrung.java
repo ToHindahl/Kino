@@ -38,13 +38,7 @@ public class Auffuehrung {
     @NotNull(message = "Kinosaal darf nicht leer sein.")
     private Kinosaal kinosaal;
 
-    //TODO JOIN der reservierten Sitzplätze
-    @OneToMany
-    @JoinColumn(name = "sitzplatz_id")
-    @JsonIdentityReference(alwaysAsId = true)
-    private List<Sitzplatz> reservierteSitzplaetze;
-
     public AuffuehrungDTO toDTO() {
-        return new AuffuehrungDTO(this.auffuehrungId, this.startzeit, this.film.getFilmId(), this.kinosaal.getKinosaalId(), this.reservierteSitzplaetze.stream().map(r -> r.getSitzplatzId()).toList());
+        return new AuffuehrungDTO(this.auffuehrungId, this.startzeit, this.film.getFilmId(), this.kinosaal.getKinosaalId());
     }
 }

@@ -19,12 +19,12 @@ public class FilmService {
         Film film = new Film();
         film.setTitel(dto.titel());
         filmRepository.save(film);
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"success", film.toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"success", "film", film.toDTO());
     }
 
     @Transactional
     public CommandResponse handleFilmRequestAll() {
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"success", filmRepository.findAll().stream().map(Film::toDTO).toList());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"success", "filmListe", filmRepository.findAll().stream().map(Film::toDTO).toList());
     }
 
 }

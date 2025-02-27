@@ -1,9 +1,7 @@
 package de.fhdw.Kino.App.service;
 
-import de.fhdw.Kino.App.producer.KinoProducer;
-import de.fhdw.Kino.Lib.dto.CreationResponseDTO;
-import de.fhdw.Kino.Lib.dto.KinoDTO;
-import de.fhdw.Kino.Lib.dto.StatusDTO;
+import de.fhdw.Kino.App.producer.CommandProducer;
+import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,20 +9,27 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KinoService {
 
-    private final KinoProducer kinoProducer;
+    private final CommandProducer commandProducer;
 
-    public KinoDTO createKino(KinoDTO kinoDto){
+    public KinoDTO createKino(KinoDTO dto){
 
-        CreationResponseDTO response = kinoProducer.createKino(kinoDto);
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.CREATE_KINO, "kino", dto));
 
-        if(response.status().equals(StatusDTO.ERROR)) {
+        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.message());
         }
 
-        return getKino();
+        return (KinoDTO) response.entity();
     }
 
     public KinoDTO getKino() {
-        return kinoProducer.getKino().kino();
+
+
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_KINO, "", null));
+
+        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.message());
+        }
+        return (KinoDTO) response.entity();
     }
 }
