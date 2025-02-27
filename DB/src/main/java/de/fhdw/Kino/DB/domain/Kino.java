@@ -9,7 +9,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Data
 @Entity
@@ -36,11 +35,11 @@ public class Kino {
 
                 reihe.getSitzplaetze().forEach(sitzplatz -> {
                     SitzplatzDTO sitzplatzDTO = new SitzplatzDTO(sitzplatz.getSitzplatzId(), sitzplatz.getNummer(), sitzreiheDTO);
-                    sitzreiheDTO.sitzplaetze().add(sitzplatzDTO);
+                    sitzreiheDTO.getSitzplaetze().add(sitzplatzDTO);
                 });
-                kinosaalDTO.sitzreihen().add(sitzreiheDTO);
+                kinosaalDTO.getSitzreihen().add(sitzreiheDTO);
             });
-            kinoDTO.kinosaele().add(kinosaalDTO);
+            kinoDTO.getKinosaele().add(kinosaalDTO);
         });
 
         return kinoDTO;

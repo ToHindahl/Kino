@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/vorstellungen")
@@ -30,7 +29,7 @@ public class VorstellungController {
         List<AuffuehrungDTO> auffuehrungDTOs = auffuehrungService.getAllAuffuehrungen();
 
         if(datum != null) {
-            return auffuehrungDTOs.stream().filter(a -> a.startzeit().toLocalDate().equals(datum)).toList();
+            return auffuehrungDTOs.stream().filter(a -> a.getStartzeit().toLocalDate().equals(datum)).toList();
         }
 
         return auffuehrungDTOs;

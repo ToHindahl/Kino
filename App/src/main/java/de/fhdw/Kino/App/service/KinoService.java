@@ -15,11 +15,11 @@ public class KinoService {
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.CREATE_KINO, "kino", dto));
 
-        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.message());
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
         }
 
-        return (KinoDTO) response.entity();
+        return (KinoDTO) response.getEntity();
     }
 
     public KinoDTO getKino() {
@@ -27,9 +27,9 @@ public class KinoService {
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_KINO, "", null));
 
-        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.message());
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
         }
-        return (KinoDTO) response.entity();
+        return (KinoDTO) response.getEntity();
     }
 }

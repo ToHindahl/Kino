@@ -26,28 +26,28 @@ public class AuffuehrungService {
     @Transactional
     public CommandResponse handleAuffuehrungCreation(AuffuehrungDTO dto) {
         Auffuehrung auffuehrung = new Auffuehrung();
-        Optional<Film> film = filmRepository.findById(dto.filmId());
+        Optional<Film> film = filmRepository.findById(dto.getFilmId());
         if(film.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Film nicht gefunden", "error", null);
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Film nicht gefunden", "error");
         }
 
         auffuehrung.setFilm(film.get());
 
         List<Kinosaal> alleKinosaele = kinoRepository.findAll().get(0).getKinosaele();
-        if(!alleKinosaele.stream().map(Kinosaal::getKinosaalId).toList().contains(dto.kinosaalId())) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kinosaal existiert nicht", "error", null);
+        if(!alleKinosaele.stream().map(Kinosaal::getKinosaalId).toList().contains(dto.getKinosaalId())) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kinosaal existiert nicht", "error");
         }
 
-        auffuehrung.setKinosaal(alleKinosaele.stream().filter(kinosaal -> kinosaal.getKinosaalId().equals(dto.kinosaalId())).findFirst().get());
+        auffuehrung.setKinosaal(alleKinosaele.stream().filter(kinosaal -> kinosaal.getKinosaalId().equals(dto.getKinosaalId())).findFirst().get());
 
-        auffuehrung.setStartzeit(dto.startzeit());
+        auffuehrung.setStartzeit(dto.getStartzeit());
         auffuehrungRepository.save(auffuehrung);
 
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"created", "error", auffuehrung.toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"created", "auffuehrung", auffuehrung.toDTO());
     }
 
     @Transactional
     public CommandResponse handleAuffuehrungRequestAll() {
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "success", "auffuehrungsListe", auffuehrungRepository.findAll().stream().map(Auffuehrung::toDTO).toList());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "auffuehrungsListe", auffuehrungRepository.findAll().stream().map(Auffuehrung::toDTO).toList());
     }
 }

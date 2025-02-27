@@ -17,21 +17,21 @@ public class KundeService {
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.CREATE_KUNDE, "kunde", dto));
 
-        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.message());
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
         }
 
-        return (KundeDTO) response.entity();
+        return (KundeDTO) response.getEntity();
     }
 
     public List<KundeDTO> getAllKunden() {
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_KUNDEN, "", null));
 
-        if (response.status().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.message());
+        if (response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
         }
 
-        return (List<KundeDTO>) response.entity();
+        return (List<KundeDTO>) response.getEntity();
     }
 }

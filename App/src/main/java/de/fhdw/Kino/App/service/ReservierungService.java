@@ -17,55 +17,55 @@ public class ReservierungService {
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.CREATE_RESERVIERUNG, "reservierung", dto));
 
-        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.message());
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
         }
 
-        return (ReservierungDTO) response.entity();
+        return (ReservierungDTO) response.getEntity();
     }
 
     public ReservierungDTO bookReservierung(Long id) {
 
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.BOOK_RESERVIERUNG, "reservierung", new ReservierungDTO(id, null, null, null, null)));
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.BOOK_RESERVIERUNG, "reservierung", id));
 
-        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.message());
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
         }
 
-        return (ReservierungDTO) response.entity();
+        return (ReservierungDTO) response.getEntity();
     }
 
     public ReservierungDTO cancelReservierung(Long id) {
 
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.CANCEL_RESERVIERUNG, "reservierung", new ReservierungDTO(id, null, null, null, null)));
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.CANCEL_RESERVIERUNG, "reservierung", id));
 
-        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.message());
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
         }
 
-        return (ReservierungDTO) response.entity();
+        return (ReservierungDTO) response.getEntity();
     }
 
     public List<ReservierungDTO> getReservierungenByAuffuehrung(Long id) {
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_RESERVIERUNGEN, "", null));
 
-        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.message());
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
         }
 
-        return ((List<ReservierungDTO>) response.entity()).stream().filter(r -> r.auffuehrungId().equals(id)).toList();
+        return ((List<ReservierungDTO>) response.getEntity()).stream().filter(r -> r.getAuffuehrungId().equals(id)).toList();
     }
 
     public List<ReservierungDTO> getReservierungen() {
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_RESERVIERUNGEN, "", null));
 
-        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.message());
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
         }
 
-        return (List<ReservierungDTO>) response.entity();
+        return (List<ReservierungDTO>) response.getEntity();
     }
 
 

@@ -46,6 +46,6 @@ public class Sitzreihe {
     }
 
     public SitzreiheDTO toDTO() {
-        return new SitzreiheDTO(this.sitzreiheId, this.getSitzreihenTypDTO(), this.kinosaal.toDTO(), this.sitzplaetze.stream().map(s -> s.toDTO()).toList());
+        return new SitzreiheDTO(this.sitzreiheId, this.getSitzreihenTypDTO(), this.kinosaal.toDTO(), this.sitzplaetze.stream().map(Sitzplatz::toDTO).toList());
     }
 }

@@ -8,11 +8,9 @@ import de.fhdw.Kino.DB.repositories.KinoRepository;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Slf4j
@@ -29,16 +27,16 @@ public class KinoService {
         }
 
         Kino kino = new Kino();
-        kino.setName(dto.name());
+        kino.setName(dto.getName());
 
-        dto.kinosaele().forEach(kinosaalDTO -> {
+        dto.getKinosaele().forEach(kinosaalDTO -> {
             Kinosaal kinosaal = new Kinosaal();
             kinosaal.setKino(kino);
-            kinosaal.setName(kinosaalDTO.name());
-            kinosaalDTO.sitzreihen().forEach(r -> {
+            kinosaal.setName(kinosaalDTO.getName());
+            kinosaalDTO.getSitzreihen().forEach(r -> {
                 Sitzreihe sitzreihe = new Sitzreihe();
                 sitzreihe.setKinosaal(kinosaal);
-                switch (r.sitzreihenTyp()) {
+                switch (r.getSitzreihenTyp()) {
                     case LOGE_MIT_SERVICE:
                         sitzreihe.setSitzreihenTyp(Sitzreihe.SitzreihenTyp.LOGE_MIT_SERVICE);
                     case LOGE:
@@ -46,10 +44,10 @@ public class KinoService {
                     case PARKETT:
                         sitzreihe.setSitzreihenTyp(Sitzreihe.SitzreihenTyp.PARKETT);
                 }
-                r.sitzplaetze().forEach(s -> {
+                r.getSitzplaetze().forEach(s -> {
                     Sitzplatz sitzplatz = new Sitzplatz();
                     sitzplatz.setSitzreihe(sitzreihe);
-                    sitzplatz.setNummer(s.nummer());
+                    sitzplatz.setNummer(s.getNummer());
                     sitzreihe.getSitzplaetze().add(sitzplatz);
                 });
                 kinosaal.getSitzreihen().add(sitzreihe);
@@ -66,11 +64,7 @@ public class KinoService {
     @Transactional
     public CommandResponse handleKinoRequest() {
         Optional<Kino> kino = Optional.ofNullable(kinoRepository.findAll().get(0));
-        if (kino.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "Kino nicht gefunden", "error", null);
-        }
-
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"success", "kino", kino.get().toDTO());
+        return kino.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "kino", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino nicht gefunden", "error", null));
 
 
     }

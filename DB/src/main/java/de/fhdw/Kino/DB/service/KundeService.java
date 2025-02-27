@@ -1,6 +1,5 @@
 package de.fhdw.Kino.DB.service;
 
-import de.fhdw.Kino.DB.domain.Kino;
 import de.fhdw.Kino.DB.domain.Kunde;
 import de.fhdw.Kino.DB.repositories.KundeRepository;
 import de.fhdw.Kino.Lib.dto.CommandResponse;
@@ -20,21 +19,17 @@ public class KundeService {
     @Transactional
     public CommandResponse handleKundeCreation(KundeDTO dto) {
         Kunde kunde = new Kunde();
-        kunde.setVorname(dto.vorname());
-        kunde.setNachname(dto.nachname());
-        kunde.setEmail(dto.email());
+        kunde.setVorname(dto.getVorname());
+        kunde.setNachname(dto.getNachname());
+        kunde.setEmail(dto.getEmail());
         kundeRepository.save(kunde);
         return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "success", "kunde", kunde.toDTO());
     }
 
     @Transactional
-    public CommandResponse handleKinoRequest() {
+    public CommandResponse handleKundeRequestAll() {
         Optional<Kunde> kunde = Optional.ofNullable(kundeRepository.findAll().get(0));
-        if (kunde.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "Kino nicht gefunden", "error", null);
-        }
-
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"success", "kunde", kunde.get().toDTO());
+        return kunde.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "kundenListe", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kunden nicht gefunden", "error", null));
 
 
     }

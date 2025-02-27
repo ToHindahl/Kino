@@ -1,7 +1,27 @@
 package de.fhdw.Kino.Lib.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
-public record AuffuehrungDTO(Long auffuehrungId, LocalDateTime startzeit, Long filmId, Long kinosaalId) implements Serializable {}
+@Data
+@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class AuffuehrungDTO implements Serializable {
+
+    private Long auffuehrungId;
+
+    @NonNull
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime startzeit;
+
+    @NonNull
+    private Long filmId;
+
+    @NonNull
+    private Long kinosaalId;
+}

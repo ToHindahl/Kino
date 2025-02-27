@@ -4,13 +4,11 @@ import de.fhdw.Kino.DB.domain.Auffuehrung;
 import de.fhdw.Kino.DB.domain.Kunde;
 import de.fhdw.Kino.DB.domain.Reservierung;
 import de.fhdw.Kino.DB.repositories.AuffuehrungRepository;
-import de.fhdw.Kino.DB.repositories.KinoRepository;
 import de.fhdw.Kino.DB.repositories.KundeRepository;
 import de.fhdw.Kino.DB.repositories.ReservierungRepository;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,13 +30,13 @@ public class ReservierungService {
     @Transactional
     public CommandResponse handleReservierungCreation(ReservierungDTO dto) {
         Reservierung reservierung = new Reservierung();
-        Optional<Kunde> kunde = kundeRepository.findById(dto.kundeId());
+        Optional<Kunde> kunde = kundeRepository.findById(dto.getKundeId());
         if(kunde.isEmpty()) {
             return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kunde nicht gefunden", "error", null);
         }
         reservierung.setKunde(kunde.get());
 
-        Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(dto.auffuehrungId());
+        Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(dto.getAuffuehrungId());
         if(auffuehrung.isEmpty()) {
             return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Auffuehrung nicht gefunden", "error", null);
         }
@@ -49,7 +47,7 @@ public class ReservierungService {
 
         auffuehrung.get().getKinosaal().getSitzreihen().forEach(reihe -> {
             reihe.getSitzplaetze().forEach(sitzplatz -> {
-                if(dto.sitzplatzIds().contains(sitzplatz.getSitzplatzId())) {
+                if(dto.getSitzplatzIds().contains(sitzplatz.getSitzplatzId())) {
                     alleSitzplaetze.add(sitzplatz.getSitzplatzId());
                 }
             });
@@ -62,18 +60,18 @@ public class ReservierungService {
 
         alleSitzplaetze.removeIf(reservierteSitzplaetze::contains);
 
-        if(!alleSitzplaetze.containsAll(dto.sitzplatzIds())) {
+        if(!alleSitzplaetze.containsAll(dto.getSitzplatzIds())) {
             return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Sitzplatz nicht verfügbar", "error", null);
         }
 
-        reservierung.setSitzplatzIds(dto.sitzplatzIds());
+        reservierung.setSitzplatzIds(dto.getSitzplatzIds());
 
         reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.RESERVED);
 
-        if(dto.reservierungsStatus() == null) {
+        if(dto.getReservierungsStatus() == null) {
             reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.RESERVED);
         } else {
-            switch (dto.reservierungsStatus()) {
+            switch (dto.getReservierungsStatus()) {
                 case RESERVED:
                     reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.RESERVED);
                 case BOOKED:
@@ -91,9 +89,9 @@ public class ReservierungService {
     }
 
     @Transactional
-    public CommandResponse handleReservierungCancelation(ReservierungDTO dto) {
+    public CommandResponse handleReservierungCancelation(Long id) {
 
-        Optional<Reservierung> reservierung = reservierungRepository.findById(dto.reservierungId());
+        Optional<Reservierung> reservierung = reservierungRepository.findById(id);
 
         if(reservierung.isEmpty()) {
             return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung nicht gefunden", "error", null);
@@ -111,9 +109,9 @@ public class ReservierungService {
     }
 
     @Transactional
-    public CommandResponse handleReservierungBooking(ReservierungDTO dto) {
+    public CommandResponse handleReservierungBooking(Long id) {
 
-        Optional<Reservierung> reservierung = reservierungRepository.findById(dto.reservierungId());
+        Optional<Reservierung> reservierung = reservierungRepository.findById(id);
 
         if(reservierung.isEmpty()) {
             return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung nicht gefunden", "error", null);

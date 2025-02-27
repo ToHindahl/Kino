@@ -17,21 +17,21 @@ public class FilmService {
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.CREATE_FILM, "film", dto));
 
-        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.message());
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
         }
 
-        return (FilmDTO) response.entity();
+        return (FilmDTO) response.getEntity();
     }
 
     public List<FilmDTO> getAllFilme() {
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.GET_FILME, "", null));
 
-        if(response.status().equals(CommandResponse.CommandStatus.ERROR)) {
-            throw new RuntimeException(response.message());
+        if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
         }
 
-        return (List<FilmDTO>) response.entity();
+        return (List<FilmDTO>) response.getEntity();
     }
 }

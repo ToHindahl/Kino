@@ -37,6 +37,6 @@ public class Kinosaal {
     private List<Sitzreihe> sitzreihen = new ArrayList<>();
 
     public KinosaalDTO toDTO() {
-        return new KinosaalDTO(this.kinosaalId, this.name, this.kino.toDTO(), this.sitzreihen.stream().map(s -> s.toDTO()).toList());
+        return new KinosaalDTO(this.kinosaalId, this.name, this.kino.toDTO(), this.sitzreihen.stream().map(Sitzreihe::toDTO).toList());
     }
 }

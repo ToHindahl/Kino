@@ -21,13 +21,13 @@ public class ReservierungController {
     }
 
     // Umwandlung von Reservierung in Buchung
-    @PutMapping("/{id}/buchung")
+    @PutMapping("/{id}/buchen")
     public ResponseEntity<?> bookReservierung(@PathVariable Long id) {
         return new ResponseEntity<>(reservierungService.bookReservierung(id), HttpStatus.CREATED);
     }
 
     // Reservierung stornieren
-    @PutMapping("/{id}/cancel")
+    @PutMapping("/{id}/stornieren")
     public ResponseEntity<?> cancelReservierung(@PathVariable Long id) {
         return new ResponseEntity<>(reservierungService.cancelReservierung(id), HttpStatus.CREATED);
     }

@@ -1,6 +1,7 @@
 package de.fhdw.Kino.DB.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.fhdw.Kino.DB.config.RabbitMQConfig;
 import de.fhdw.Kino.DB.service.*;
 import de.fhdw.Kino.Lib.dto.*;
@@ -51,6 +52,7 @@ public class CommandListener {
             response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "error",  null);
         }
 
+        log.info("Antwort erstellt: " + response);
         // Sende die Antwort zurück
         String replyTo = message.getMessageProperties().getReplyTo();
         String correlationId = message.getMessageProperties().getCorrelationId();
@@ -65,18 +67,18 @@ public class CommandListener {
     }
 
     private CommandResponse processCommandRequest(CommandRequest request) {
-        log.info("Stats-Modul: CRUD-Request empfangen - " + request.toString());
+        log.info("DB-Modul: CRUD-Request empfangen - " + request.toString());
 
         CommandResponse response;
 
         try {
-            Object entity = request.entity();
+            Object entity = request.getEntity();
             if (entity instanceof LinkedHashMap) {
                 // Deserialisiere das entity-Feld basierend auf dem Typnamen
-                entity = deserializeEntity((LinkedHashMap<?, ?>) entity, request.entityType());
+                entity = deserializeEntity((LinkedHashMap<?, ?>) entity, request.getEntityType());
             }
 
-            switch (request.operation()) {
+            switch (request.getOperation()) {
                 case CREATE_RESERVIERUNG -> response = reservierungService.handleReservierungCreation((ReservierungDTO) entity);
                 case CREATE_KINO -> response = kinoService.handleKinoCreation((KinoDTO) entity);
                 case CREATE_KUNDE -> response = kundeService.handleKundeCreation((KundeDTO) entity);
@@ -87,8 +89,8 @@ public class CommandListener {
                 case GET_FILME -> response = filmService.handleFilmRequestAll();
                 case GET_KUNDEN -> response = kundeService.handleKundeRequestAll();
                 case GET_RESERVIERUNGEN -> response = reservierungService.handleReservierungRequestAll();
-                case CANCEL_RESERVIERUNG -> response = reservierungService.handleReservierungCancelation((ReservierungDTO) entity);
-                case BOOK_RESERVIERUNG -> response = reservierungService.handleReservierungBooking((ReservierungDTO) entity);
+                case CANCEL_RESERVIERUNG -> response = reservierungService.handleReservierungCancelation(((Number) entity).longValue());
+                case BOOK_RESERVIERUNG -> response = reservierungService.handleReservierungBooking(((Number) entity).longValue());
                 default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "unbekanntes Objekt erhalten", "error", null);
             }
         } catch (Exception e) {
@@ -101,6 +103,9 @@ public class CommandListener {
 
     private Object deserializeEntity(LinkedHashMap<?, ?> entityMap, String entityType) {
         ObjectMapper objectMapper = new ObjectMapper();
+
+        objectMapper.registerModule(new JavaTimeModule());
+
         try {
             switch (entityType) {
                 case "reservierung" -> {
