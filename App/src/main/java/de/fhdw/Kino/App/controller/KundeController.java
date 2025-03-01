@@ -20,6 +20,12 @@ public class KundeController {
         return new ResponseEntity<>(kundeService.createKunde(dto), HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/kunde/{id}")
+    public ResponseEntity<Void> deleteKunde(@PathVariable Long id) {
+        kundeService.deleteKunde(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/kunden")
     public ResponseEntity<?> getKunden() {
         return new ResponseEntity<>(kundeService.getAllKunden(), HttpStatus.OK);

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +50,10 @@ public class AuffuehrungService {
 
         if(dto.getEndzeit().isBefore(dto.getStartzeit())){
             return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Die Endzeit darf nicht vor der Startzeit liegen.", "error");
+        }
+
+        if(dto.getStartzeit().isBefore(LocalDateTime.now()) || dto.getEndzeit().isBefore(LocalDateTime.now())){
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Die Aufführung darf nicht in der Vergangenheit liegen", "error");
         }
 
         if(auffuehrungRepository.findAll().stream().anyMatch(a -> a.getKinosaal().getKinosaalId().equals(dto.getKinosaalId()) && a.getStartzeit().isBefore(dto.getEndzeit()) && a.getEndzeit().isAfter(dto.getStartzeit()))) {

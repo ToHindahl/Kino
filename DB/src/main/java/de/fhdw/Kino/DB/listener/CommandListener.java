@@ -94,6 +94,7 @@ public class CommandListener {
                 case CANCEL_RESERVIERUNG -> response = reservierungService.handleReservierungCancelation(((Number) entity).longValue());
                 case BOOK_RESERVIERUNG -> response = reservierungService.handleReservierungBooking(((Number) entity).longValue());
                 case DELETE_AUFFUEHRUNG -> response = auffuehrungService.handleAuffuehrungDeletion(((Number) entity).longValue());
+                case DELETE_KUNDE -> response = kundeService.handleKundeDeletion(((Number) entity).longValue());
                 case DELETE_FILM -> response = filmService.handleFilmDeletion(((Number) entity).longValue());
                 case RESET -> response = kinoService.handleKinoReset();
                 default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "unbekanntes Objekt erhalten", "error", null);

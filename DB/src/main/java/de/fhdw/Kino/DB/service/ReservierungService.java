@@ -48,7 +48,7 @@ public class ReservierungService {
             return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Aufführung nicht gefunden", "error", null);
         }
 
-        if(auffuehrung.get().getStartzeit().isAfter(LocalDateTime.now())) {
+        if(auffuehrung.get().getStartzeit().isBefore(LocalDateTime.now())) {
             return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Aufführung bereits gestartet", "error", null);
         }
 

@@ -34,4 +34,14 @@ public class KundeService {
 
         return (List<KundeDTO>) response.getEntity();
     }
+
+    public void deleteKunde(Long id) {
+
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.CommandType.DELETE_KUNDE, "kunde", id));
+
+        if (response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(response.getMessage());
+        }
+
+    }
 }
