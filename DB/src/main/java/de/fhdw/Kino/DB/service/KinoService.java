@@ -5,13 +5,13 @@ import de.fhdw.Kino.DB.model.Kinosaal;
 import de.fhdw.Kino.DB.model.Sitzplatz;
 import de.fhdw.Kino.DB.model.Sitzreihe;
 import de.fhdw.Kino.DB.repository.*;
+import de.fhdw.Kino.Lib.command.CommandResponse;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -30,9 +30,6 @@ public class KinoService {
 
     @Transactional
     public CommandResponse handleKinoCreation(KinoDTO dto) {
-        if(!kinoRepository.findAll().isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino bereits initialisiert", "error", null);
-        }
 
         Kino kino = new Kino();
         kino.setName(dto.getName());
@@ -62,32 +59,23 @@ public class KinoService {
         });
 
         kinoRepository.save(kino);
-
         return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created","kino", kino.toDTO());
     }
 
     @Transactional
     public CommandResponse handleKinoRequest() {
-        if(kinoRepository.findAll().isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
-        }
-
-        Optional<Kino> kino = Optional.ofNullable(kinoRepository.findAll().get(0));
-        return kino.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "kino", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino nicht gefunden", "error", null));
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "kino", kinoRepository.findAll().get(0).toDTO());
     }
 
     @Transactional
     public CommandResponse handleKinoReset() {
-        if(kinoRepository.findAll().isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
-        }
 
         kinoRepository.deleteAll();
         kundeRepository.deleteAll();
         reservierungRepository.deleteAll();
         auffuehrungRepository.deleteAll();
         filmRepository.deleteAll();
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "reset", "");
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "reset", "null");
     }
 
 }

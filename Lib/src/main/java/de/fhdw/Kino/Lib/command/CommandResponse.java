@@ -1,4 +1,4 @@
-package de.fhdw.Kino.Lib.dto;
+package de.fhdw.Kino.Lib.command;
 
 import lombok.*;
 

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.fhdw.Kino.DB.config.RabbitMQConfig;
 import de.fhdw.Kino.DB.service.*;
+import de.fhdw.Kino.Lib.command.CommandRequest;
+import de.fhdw.Kino.Lib.command.CommandResponse;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -38,6 +43,7 @@ public class CommandListener {
 
     @Autowired
     private ReservierungService reservierungService;
+
 
     @Transactional
     @RabbitListener(queues = RabbitMQConfig.COMMAND_DB_QUEUE)
@@ -81,24 +87,55 @@ public class CommandListener {
             }
 
             switch (request.getOperation()) {
-                case CREATE_RESERVIERUNG -> response = reservierungService.handleReservierungCreation((ReservierungDTO) entity);
-                case CREATE_KINO -> response = kinoService.handleKinoCreation((KinoDTO) entity);
-                case CREATE_KUNDE -> response = kundeService.handleKundeCreation((KundeDTO) entity);
-                case CREATE_FILM -> response = filmService.handleFilmCreation((FilmDTO) entity);
-                case CREATE_AUFFUEHRUNG -> response = auffuehrungService.handleAuffuehrungCreation((AuffuehrungDTO) entity);
-                case GET_AUFFUEHRUNGEN -> response = auffuehrungService.handleAuffuehrungRequestAll();
-                case GET_KINO -> response = kinoService.handleKinoRequest();
-                case GET_FILME -> response = filmService.handleFilmRequestAll();
-                case GET_KUNDEN -> response = kundeService.handleKundeRequestAll();
-                case GET_RESERVIERUNGEN -> response = reservierungService.handleReservierungRequestAll();
-                case CANCEL_RESERVIERUNG -> response = reservierungService.handleReservierungCancelation(((Number) entity).longValue());
-                case BOOK_RESERVIERUNG -> response = reservierungService.handleReservierungBooking(((Number) entity).longValue());
-                case DELETE_AUFFUEHRUNG -> response = auffuehrungService.handleAuffuehrungDeletion(((Number) entity).longValue());
-                case DELETE_KUNDE -> response = kundeService.handleKundeDeletion(((Number) entity).longValue());
-                case DELETE_FILM -> response = filmService.handleFilmDeletion(((Number) entity).longValue());
-                case RESET -> response = kinoService.handleKinoReset();
-                default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "unbekanntes Objekt erhalten", "error", null);
+                case CREATE -> {
+                    switch (request.getEntityType()) {
+                        case "AUFFUEHRUNG" -> response = auffuehrungService.handleAuffuehrungCreation((AuffuehrungDTO) entity);
+                        case "FILM" -> response = filmService.handleFilmCreation((FilmDTO) entity);
+                        case "KINO" -> response = kinoService.handleKinoCreation((KinoDTO) entity);
+                        case "KUNDE" -> response = kundeService.handleKundeCreation((KundeDTO) entity);
+                        case "RESERVIERUNG" -> response = reservierungService.handleReservierungCreation((ReservierungDTO) entity);
+                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für CREATE", "error", null);
+                    }
+                }
+                case READ -> {
+                    switch (request.getEntityType()) {
+                        case "AUFFUEHRUNG" -> response = auffuehrungService.handleAuffuehrungRequest(((Number) entity).longValue());
+                        case "FILM" -> response = filmService.handleFilmRequest(((Number) entity).longValue());
+                        case "KINO" -> response = kinoService.handleKinoRequest();
+                        case "KUNDE" -> response = kundeService.handleKundeRequest(((Number) entity).longValue());
+                        case "RESERVIERUNG" -> response = reservierungService.handleReservierungRequest(((Number) entity).longValue());
+                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für READ", "error", null);
+                    }
+                }
+                case READ_ALL -> {
+                    switch (request.getEntityType()) {
+                        case "AUFFUEHRUNG" -> response = auffuehrungService.handleAuffuehrungRequestAll();
+                        case "FILM" -> response = filmService.handleFilmRequestAll();
+                        case "KUNDE" -> response = kundeService.handleKundeRequestAll();
+                        case "RESERVIERUNG" -> response = reservierungService.handleReservierungRequestAll();
+                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für READ_ALL", "error", null);
+                    }
+                }
+                case UPDATE -> {
+                    if (request.getEntityType().equals("RESERVIERUNG")) {
+                        response = reservierungService.handleReservierungUpdate((ReservierungDTO) entity);
+                    } else {
+                        response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "UPDATE nicht implementiert", "error", null);
+                    }
+                }
+                case DELETE -> {
+                    switch (request.getEntityType()) {
+                        case "AUFFUEHRUNG" -> response = auffuehrungService.handleAuffuehrungDeletion((AuffuehrungDTO) entity);
+                        case "FILM" -> response = filmService.handleFilmDeletion((FilmDTO) entity);
+                        case "KINO" -> response = kinoService.handleKinoReset();
+                        case "KUNDE" -> response = kundeService.handleKundeDeletion((KundeDTO) entity);
+                        case "RESERVIERUNG" -> response = reservierungService.handleReservierungDeletion((ReservierungDTO) entity);
+                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für DELETE", "error", null);
+                    }
+                }
+                default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Unbekannte Operation", "error", null);
             }
+
         } catch (Exception e) {
             log.error("Fehler beim Verarbeiten der Nachricht: " + e.getMessage(), e);
             response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "error", null);
@@ -114,23 +151,23 @@ public class CommandListener {
 
         try {
             switch (entityType) {
-                case "reservierung" -> {
+                case "RESERVIERUNG" -> {
                     return objectMapper.convertValue(entityMap, ReservierungDTO.class);
                 }
-                case "kino" -> {
+                case "KINO" -> {
                     return objectMapper.convertValue(entityMap, KinoDTO.class);
                 }
-                case "kunde" -> {
+                case "KUNDE" -> {
                     return objectMapper.convertValue(entityMap, KundeDTO.class);
                 }
-                case "film" -> {
+                case "FILM" -> {
                     return objectMapper.convertValue(entityMap, FilmDTO.class);
                 }
-                case "auffuehrung" -> {
+                case "AUFFUEHRUNG" -> {
                     return objectMapper.convertValue(entityMap, AuffuehrungDTO.class);
                 }
-                case "id" -> {
-                    return objectMapper.convertValue(entityMap, Long.class);
+                case "BEGINN" -> {
+                    return objectMapper.convertValue(entityMap, objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
                 }
                 default -> throw new IllegalArgumentException("Unbekannter Entity-Typ: " + entityType);
             }

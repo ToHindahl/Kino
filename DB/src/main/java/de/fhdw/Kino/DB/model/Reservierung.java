@@ -43,6 +43,14 @@ public class Reservierung {
         CANCELLED
     }
 
+    public ReservierungsStatus getReservierungsStatusFromDTO(ReservierungDTO.ReservierungsStatusDTO reservierungsStatusDTO) {
+        return switch (reservierungsStatusDTO) {
+            case RESERVED -> ReservierungsStatus.RESERVED;
+            case BOOKED -> ReservierungsStatus.BOOKED;
+            case CANCELLED -> ReservierungsStatus.CANCELLED;
+        };
+    }
+
     public ReservierungDTO.ReservierungsStatusDTO getReservierungsStatusDTO() {
         return switch (reservierungsStatus) {
             case RESERVED -> ReservierungDTO.ReservierungsStatusDTO.RESERVED;

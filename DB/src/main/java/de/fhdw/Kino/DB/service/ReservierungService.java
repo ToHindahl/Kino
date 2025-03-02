@@ -7,6 +7,7 @@ import de.fhdw.Kino.DB.repository.AuffuehrungRepository;
 import de.fhdw.Kino.DB.repository.KinoRepository;
 import de.fhdw.Kino.DB.repository.KundeRepository;
 import de.fhdw.Kino.DB.repository.ReservierungRepository;
+import de.fhdw.Kino.Lib.command.CommandResponse;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,48 +33,13 @@ public class ReservierungService {
 
     @Transactional
     public CommandResponse handleReservierungCreation(ReservierungDTO dto) {
-        if(kinoRepository.findAll().isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
-        }
 
         Reservierung reservierung = new Reservierung();
-        Optional<Kunde> kunde = kundeRepository.findById(dto.getKundeId());
-        if(kunde.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kunde nicht gefunden", "error", null);
-        }
-        reservierung.setKunde(kunde.get());
+        Kunde kunde = kundeRepository.findById(dto.getKundeId()).get();
+        reservierung.setKunde(kunde);
 
-        Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(dto.getAuffuehrungId());
-        if(auffuehrung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Aufführung nicht gefunden", "error", null);
-        }
-
-        if(auffuehrung.get().getStartzeit().isBefore(LocalDateTime.now())) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Aufführung bereits gestartet", "error", null);
-        }
-
-        reservierung.setAuffuehrung(auffuehrung.get());
-
-        ArrayList<Long> alleSitzplaetze = new ArrayList<>();
-
-        auffuehrung.get().getKinosaal().getSitzreihen().forEach(reihe -> {
-            reihe.getSitzplaetze().forEach(sitzplatz -> {
-                if(dto.getSitzplatzIds().contains(sitzplatz.getSitzplatzId())) {
-                    alleSitzplaetze.add(sitzplatz.getSitzplatzId());
-                }
-            });
-        });
-
-        ArrayList<Long> reservierteSitzplaetze = new ArrayList<>();
-        reservierungRepository.findAll().stream().filter(r -> r.getAuffuehrung() == auffuehrung.get() && !(r.getReservierungsStatusDTO().equals(ReservierungDTO.ReservierungsStatusDTO.CANCELLED))).forEach(r -> {
-            reservierteSitzplaetze.addAll(r.getSitzplatzIds());
-        });
-
-        alleSitzplaetze.removeIf(reservierteSitzplaetze::contains);
-
-        if(!alleSitzplaetze.containsAll(dto.getSitzplatzIds())) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Sitzplatz nicht verfügbar", "error", null);
-        }
+        Auffuehrung auffuehrung = auffuehrungRepository.findById(dto.getAuffuehrungId()).get();
+        reservierung.setAuffuehrung(auffuehrung);
 
         reservierung.setSitzplatzIds(dto.getSitzplatzIds());
 
@@ -88,65 +54,34 @@ public class ReservierungService {
         }
 
         reservierungRepository.save(reservierung);
-
         log.info("Reservierung erstellt: " + reservierung.toDTO());
-
         return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created", "reservierung", reservierung.toDTO());
     }
 
     @Transactional
-    public CommandResponse handleReservierungCancelation(Long id) {
-        if(kinoRepository.findAll().isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
-        }
+    public CommandResponse handleReservierungUpdate(ReservierungDTO dto) {
 
-        Optional<Reservierung> reservierung = reservierungRepository.findById(id);
+        Reservierung reservierung = reservierungRepository.findById(dto.getReservierungId()).get();
+        reservierung.setReservierungsStatus(reservierung.getReservierungsStatusFromDTO(dto.getReservierungsStatus()));
+        reservierungRepository.save(reservierung);
 
-        if(reservierung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung nicht gefunden", "error", null);
-        }
-
-        if(reservierung.get().getReservierungsStatus() != Reservierung.ReservierungsStatus.RESERVED) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung kann nicht storniert werden", "error", null);
-        }
-
-        reservierung.get().setReservierungsStatus(Reservierung.ReservierungsStatus.CANCELLED);
-
-        reservierungRepository.save(reservierung.get());
-
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "canceled", "reservierung", reservierung.get().toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "updated", "reservierung", reservierung.toDTO());
     }
 
     @Transactional
-    public CommandResponse handleReservierungBooking(Long id) {
-        if(kinoRepository.findAll().isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
-        }
-
-        Optional<Reservierung> reservierung = reservierungRepository.findById(id);
-
-        if(reservierung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung nicht gefunden", "error", null);
-        }
-
-        if(reservierung.get().getReservierungsStatus() != Reservierung.ReservierungsStatus.RESERVED) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Reservierung kann nicht gebucht werden", "error", null);
-        }
-
-        reservierung.get().setReservierungsStatus(Reservierung.ReservierungsStatus.BOOKED);
-
-        reservierungRepository.save(reservierung.get());
-
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "booked", "reservierung", reservierung.get().toDTO());
+    public CommandResponse handleReservierungRequest(Long id) {
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "reservierung", reservierungRepository.findById(id).get().toDTO());
     }
 
     @Transactional
     public CommandResponse handleReservierungRequestAll() {
-        if(kinoRepository.findAll().isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Kino noch nicht initialisiert", "error", null);
-        }
-
         return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"found", "reservierungsListe", reservierungRepository.findAll().stream().map(Reservierung::toDTO).toList());
+    }
+
+    @Transactional
+    public CommandResponse handleReservierungDeletion(ReservierungDTO dto) {
+        reservierungRepository.deleteById(dto.getReservierungId());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"deleted", "null");
     }
 
 }

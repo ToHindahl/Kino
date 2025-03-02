@@ -2,6 +2,8 @@ package de.fhdw.Kino.App.producer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import de.fhdw.Kino.Lib.command.CommandRequest;
+import de.fhdw.Kino.Lib.command.CommandResponse;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,76 +20,56 @@ public class CommandProducer {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public CommandResponse sendCommandRequest(CommandRequest request) {
+    // In CommandProducer.java
 
-        // Sende die Nachricht und warte auf eine Antwort
+    public CommandResponse sendCommandRequest(CommandRequest request) {
         CommandResponse response = (CommandResponse) rabbitTemplate.convertSendAndReceive(
-                "command.fanout.exchange", // Exchange
-                "", // Routing Key (leer für Fanout)
-                request // Nachricht
+                "command.fanout.exchange",
+                "",
+                request
         );
 
-        // Deserialisiere die Antwort
+        if (response == null) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "Keine Antwort erhalten", "error", null);
+        }
 
-        Object entity;
         try {
-            assert response != null;
-            log.info("Antwort erhalten: " + response);
-            entity = response.getEntity();
-            if (entity instanceof LinkedHashMap) {
-                // Deserialisiere das entity-Feld basierend auf dem Typnamen
-                return new CommandResponse(response.getStatus(), response.getMessage(), response.getEntityType(), deserializeEntity((LinkedHashMap<?, ?>) entity, response.getEntityType()));
-            }
+            Object entity = response.getEntity();
+            String entityType = response.getEntityType();
+            Object deserializedEntity = deserializeEntity(entity, entityType);
+            log.info("Antwort erhalten: {}", response);
+            log.info("Deserialisiertes Entity: {}", deserializedEntity);
+            return new CommandResponse(response.getStatus(), response.getMessage(), response.getEntityType(), deserializedEntity);
         } catch (Exception e) {
             throw new RuntimeException("Fehler beim Deserialisieren des entity-Felds: " + e.getMessage(), e);
         }
-
-
-        return response != null ? new CommandResponse(response.getStatus(), response.getMessage(), response.getEntityType(), entity) : new CommandResponse(CommandResponse.CommandStatus.ERROR, "Keine Antwort erhalten", "error", null);
     }
 
-    private Object deserializeEntity(LinkedHashMap<?, ?> entityMap, String entityType) {
-        if (entityType == null) {
-            throw new IllegalArgumentException("Entity-Typ darf nicht null sein");
-        }
-
+    private Object deserializeEntity(Object entity, String entityType) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
+
         try {
-            switch (entityType) {
-                case "reservierung" -> {
-                    return objectMapper.convertValue(entityMap, ReservierungDTO.class);
-                }
-                case "reservierungsListe" -> {
-                    return objectMapper.convertValue(entityMap, objectMapper.getTypeFactory().constructCollectionType(List.class, ReservierungDTO.class));
-                }
-                case "kino" -> {
-                    return objectMapper.convertValue(entityMap, KinoDTO.class);
-                }
-                case "kunde" -> {
-                    return objectMapper.convertValue(entityMap, KundeDTO.class);
-                }
-                case "kundenListe" -> {
-                    return objectMapper.convertValue(entityMap, objectMapper.getTypeFactory().constructCollectionType(List.class, KundeDTO.class));
-                }
-                case "film" -> {
-                    return objectMapper.convertValue(entityMap, FilmDTO.class);
-                }
-                case "filmListe" -> {
-                    return objectMapper.convertValue(entityMap, objectMapper.getTypeFactory().constructCollectionType(List.class, FilmDTO.class));
-                }
-                case "auffuehrung" -> {
-                    return objectMapper.convertValue(entityMap, AuffuehrungDTO.class);
-                }
-                case "auffuehrungsListe" -> {
-                    return objectMapper.convertValue(entityMap, objectMapper.getTypeFactory().constructCollectionType(List.class, AuffuehrungDTO.class));
-                }
+            return switch (entityType) {
+                case "reservierung" -> objectMapper.convertValue(entity, ReservierungDTO.class);
+                case "reservierungsListe" -> objectMapper.convertValue(entity,
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, ReservierungDTO.class));
+                case "kino" -> objectMapper.convertValue(entity, KinoDTO.class);
+                case "kunde" -> objectMapper.convertValue(entity, KundeDTO.class);
+                case "kundenListe" -> objectMapper.convertValue(entity,
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, KundeDTO.class));
+                case "film" -> objectMapper.convertValue(entity, FilmDTO.class);
+                case "filmListe" -> objectMapper.convertValue(entity,
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, FilmDTO.class));
+                case "auffuehrung" -> objectMapper.convertValue(entity, AuffuehrungDTO.class);
+                case "auffuehrungsListe" -> objectMapper.convertValue(entity,
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, AuffuehrungDTO.class));
+                case "null" -> null;
                 default -> throw new IllegalArgumentException("Unbekannter Entity-Typ: " + entityType);
-            }
+            };
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Fehler beim Deserialisieren des entity-Felds: " + e.getMessage(), e);
         }
     }
-
 
 }
