@@ -55,7 +55,7 @@ public class CommandListener {
             response = processCommandRequest(request);
         } catch (Exception e) {
             log.error("Fehler beim Verarbeiten der Nachricht: " + e.getMessage(), e);
-            response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "error",  null);
+            response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "",  null);
         }
 
         // Sende Response zurück an die App
@@ -94,7 +94,7 @@ public class CommandListener {
                         case "KINO" -> response = kinoService.handleKinoCreation((KinoDTO) entity);
                         case "KUNDE" -> response = kundeService.handleKundeCreation((KundeDTO) entity);
                         case "RESERVIERUNG" -> response = reservierungService.handleReservierungCreation((ReservierungDTO) entity);
-                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für CREATE", "error", null);
+                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für CREATE", "");
                     }
                 }
                 case READ -> {
@@ -104,7 +104,7 @@ public class CommandListener {
                         case "KINO" -> response = kinoService.handleKinoRequest();
                         case "KUNDE" -> response = kundeService.handleKundeRequest(((Number) entity).longValue());
                         case "RESERVIERUNG" -> response = reservierungService.handleReservierungRequest(((Number) entity).longValue());
-                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für READ", "error", null);
+                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für READ", "");
                     }
                 }
                 case READ_ALL -> {
@@ -113,14 +113,14 @@ public class CommandListener {
                         case "FILM" -> response = filmService.handleFilmRequestAll();
                         case "KUNDE" -> response = kundeService.handleKundeRequestAll();
                         case "RESERVIERUNG" -> response = reservierungService.handleReservierungRequestAll();
-                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für READ_ALL", "error", null);
+                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für READ_ALL", "");
                     }
                 }
                 case UPDATE -> {
                     if (request.getEntityType().equals("RESERVIERUNG")) {
                         response = reservierungService.handleReservierungUpdate((ReservierungDTO) entity);
                     } else {
-                        response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "UPDATE nicht implementiert", "error", null);
+                        response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "UPDATE nicht implementiert", "");
                     }
                 }
                 case DELETE -> {
@@ -130,7 +130,7 @@ public class CommandListener {
                         case "KINO" -> response = kinoService.handleKinoReset();
                         case "KUNDE" -> response = kundeService.handleKundeDeletion((KundeDTO) entity);
                         case "RESERVIERUNG" -> response = reservierungService.handleReservierungDeletion((ReservierungDTO) entity);
-                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für DELETE", "error", null);
+                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für DELETE", "");
                     }
                 }
                 default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Unbekannte Operation", "error", null);

@@ -6,12 +6,10 @@ import de.fhdw.Kino.Lib.command.CommandResponse;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -78,7 +76,7 @@ public class ReservierungService {
 
         List<Long> reservierteSitzplaetze = new ArrayList<>();
 
-        reservierungen.stream().filter(r -> r.getAuffuehrungId().equals(auffuehrung.getAuffuehrungId()) && !(r.getReservierungsStatus().equals(ReservierungDTO.ReservierungsStatusDTO.CANCELLED))).forEach(r -> {
+        reservierungen.stream().filter(r -> r.getAuffuehrungId().equals(auffuehrung.getAuffuehrungId()) && !(r.getReservierungsStatus().equals(ReservierungDTO.ReservierungsStatusDTO.STORNIERT))).forEach(r -> {
             reservierteSitzplaetze.addAll(r.getSitzplatzIds());
         });
 
@@ -119,13 +117,13 @@ public class ReservierungService {
 
         ReservierungDTO reservierung = (ReservierungDTO) reservierungResponse.getEntity();
 
-        if(reservierung.getReservierungsStatus() == ReservierungDTO.ReservierungsStatusDTO.BOOKED || reservierung.getReservierungsStatus() == ReservierungDTO.ReservierungsStatusDTO.CANCELLED) {
+        if(reservierung.getReservierungsStatus() == ReservierungDTO.ReservierungsStatusDTO.GEBUCHT || reservierung.getReservierungsStatus() == ReservierungDTO.ReservierungsStatusDTO.STORNIERT) {
             throw new RuntimeException("Reservierung bereits gebucht oder bereits storiniert");
         }
 
 
 
-        reservierung.setReservierungsStatus(ReservierungDTO.ReservierungsStatusDTO.BOOKED);
+        reservierung.setReservierungsStatus(ReservierungDTO.ReservierungsStatusDTO.GEBUCHT);
 
         CommandResponse reservierungCreateResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.UPDATE, "RESERVIERUNG", reservierung));
 
@@ -158,13 +156,13 @@ public class ReservierungService {
 
         ReservierungDTO reservierung = (ReservierungDTO) reservierungResponse.getEntity();
 
-        if(reservierung.getReservierungsStatus() == ReservierungDTO.ReservierungsStatusDTO.BOOKED || reservierung.getReservierungsStatus() == ReservierungDTO.ReservierungsStatusDTO.CANCELLED) {
+        if(reservierung.getReservierungsStatus() == ReservierungDTO.ReservierungsStatusDTO.GEBUCHT || reservierung.getReservierungsStatus() == ReservierungDTO.ReservierungsStatusDTO.STORNIERT) {
             throw new RuntimeException("Reservierung bereits gebucht oder bereits storiniert");
         }
 
 
 
-        reservierung.setReservierungsStatus(ReservierungDTO.ReservierungsStatusDTO.CANCELLED);
+        reservierung.setReservierungsStatus(ReservierungDTO.ReservierungsStatusDTO.STORNIERT);
 
         CommandResponse reservierungCreateResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.UPDATE, "RESERVIERUNG", reservierung));
 

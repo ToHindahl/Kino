@@ -19,7 +19,6 @@ public class KinoService {
     public void createKino(KinoDTO kinoDTO) {
         KinoDocument kinoDocument = new KinoDocument();
         kinoDocument.setKinoId(kinoDTO.getKinoId());
-        kinoDocument.setKinoName(kinoDTO.getName());
 
         // Sitzplätze mappen
         List<KinoDocument.Sitzplatz> sitzplaetze = kinoDTO.getKinosaele().stream()
@@ -40,7 +39,6 @@ public class KinoService {
         KinoDocument kinoDocument = kinoRepository.findById(1L).orElseThrow(() -> new RuntimeException("Kino nicht gefunden"));
         KinoDocument.Film film = new KinoDocument.Film();
         film.setFilmId(filmDTO.getFilmId());
-        film.setFilmtitel(filmDTO.getTitel());
         film.setAuffuehrungen(List.of()); // Initial leere Aufführungen-Liste
 
         kinoDocument.getFilme().add(film);

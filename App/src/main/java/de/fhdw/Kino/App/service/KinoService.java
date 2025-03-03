@@ -23,16 +23,14 @@ public class KinoService {
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(null, CommandRequest.Operation.READ, "KINO", null));
 
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType() != "null") {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && !kinoResponse.getEntityType().equals("null")) {
             throw new RuntimeException("Kino bereits initialisiert");
         } else if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
 
         }
 
-        KinoDTO result = (KinoDTO) commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.CREATE, "KINO", dto)).getEntity();
-
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.COMMIT, "COMMIT", null));
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.CREATE, "KINO", dto));
 
         if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.getMessage());

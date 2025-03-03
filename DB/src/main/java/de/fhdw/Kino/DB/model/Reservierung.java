@@ -38,24 +38,24 @@ public class Reservierung {
     private ReservierungsStatus reservierungsStatus;
 
     public enum ReservierungsStatus {
-        RESERVED,
-        BOOKED,
-        CANCELLED
+        RESERVIERT,
+        GEBUCHT,
+        STORNIERT
     }
 
     public ReservierungsStatus getReservierungsStatusFromDTO(ReservierungDTO.ReservierungsStatusDTO reservierungsStatusDTO) {
         return switch (reservierungsStatusDTO) {
-            case RESERVED -> ReservierungsStatus.RESERVED;
-            case BOOKED -> ReservierungsStatus.BOOKED;
-            case CANCELLED -> ReservierungsStatus.CANCELLED;
+            case RESERVIERT -> ReservierungsStatus.RESERVIERT;
+            case GEBUCHT -> ReservierungsStatus.GEBUCHT;
+            case STORNIERT -> ReservierungsStatus.STORNIERT;
         };
     }
 
     public ReservierungDTO.ReservierungsStatusDTO getReservierungsStatusDTO() {
         return switch (reservierungsStatus) {
-            case RESERVED -> ReservierungDTO.ReservierungsStatusDTO.RESERVED;
-            case BOOKED -> ReservierungDTO.ReservierungsStatusDTO.BOOKED;
-            case CANCELLED -> ReservierungDTO.ReservierungsStatusDTO.CANCELLED;
+            case RESERVIERT -> ReservierungDTO.ReservierungsStatusDTO.RESERVIERT;
+            case GEBUCHT -> ReservierungDTO.ReservierungsStatusDTO.GEBUCHT;
+            case STORNIERT -> ReservierungDTO.ReservierungsStatusDTO.STORNIERT;
         };
     }
 

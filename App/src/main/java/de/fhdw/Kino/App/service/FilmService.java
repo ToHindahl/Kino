@@ -21,10 +21,12 @@ public class FilmService {
 
         UUID transactionId = UUID.randomUUID();
 
-        Optional<KinoDTO> kino = (Optional<KinoDTO>) commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "KINO", null)).getEntity();
+        CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "KINO", null));
 
-        if(kino.isEmpty()) {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType() == "null") {
             throw new RuntimeException("Kino noch nicht initialisiert");
+        } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
+            throw new RuntimeException(kinoResponse.getMessage());
         }
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(null, CommandRequest.Operation.CREATE, "FILM", dto));

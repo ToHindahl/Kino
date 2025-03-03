@@ -14,7 +14,6 @@ public class KinoDocument {
     @Id
     private Long kinoId;
 
-    private String kinoName;
     private List<Sitzplatz> sitzplaetze;
     private List<Film> filme;
 
@@ -32,7 +31,6 @@ public class KinoDocument {
         @Id
         private Long filmId;
 
-        private String filmtitel;
         private List<Auffuehrung> auffuehrungen;
     }
 

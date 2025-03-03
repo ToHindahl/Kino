@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @Slf4j
 @Component
@@ -64,7 +66,8 @@ public class KinoService {
 
     @Transactional
     public CommandResponse handleKinoRequest() {
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "kino", kinoRepository.findAll().get(0).toDTO());
+        Optional<Kino> kino = kinoRepository.findAll().stream().findFirst();
+        return kino.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "kino", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "null", "null"));
     }
 
     @Transactional

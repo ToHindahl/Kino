@@ -50,35 +50,39 @@ public class StatsListener {
     }
 
     private void processRequestResponsePair(CommandRequest request, CommandResponse response) {
-        // Hier kannst du Request und Response verarbeiten
-        log.info("Verarbeite Request und Response:");
-        log.info("Request: {}", request);
-        log.info("Response: {}", response);
-
-        // Beispiel: Zähle erfolgreiche und fehlgeschlagene Anfragen
-        if (response.getStatus().equals(CommandResponse.CommandStatus.SUCCESS)) {
-            log.info("Anfrage war erfolgreich.");
-        } else {
-            log.info("Anfrage ist fehlgeschlagen.");
-        }
-
-        try {
+         try {
 
             if(response.getStatus().equals(CommandResponse.CommandStatus.SUCCESS)) {
                 switch (request.getOperation()) {
-                    case CREATE_KINO -> kinoService.createKino((KinoDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
-                    case CREATE_FILM -> kinoService.addFilm((FilmDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
-                    case CREATE_AUFFUEHRUNG -> kinoService.addAuffuehrung((AuffuehrungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
-                    case CREATE_RESERVIERUNG -> {
-                        ReservierungDTO reservierungDTO = (ReservierungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType());
-                        if(reservierungDTO.getReservierungsStatus().equals(ReservierungDTO.ReservierungsStatusDTO.BOOKED)) {
-                            kinoService.addReservierung(reservierungDTO);
+                    case CREATE -> {
+                        switch (response.getEntityType()) {
+                            case "kino" -> kinoService.createKino((KinoDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
+                            case "auffuehrung" -> kinoService.addAuffuehrung((AuffuehrungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
+                            case "film" -> kinoService.addFilm((FilmDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
+                            case "reservierung" -> {
+                                ReservierungDTO reservierungDTO = (ReservierungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType());
+                                if(reservierungDTO.getReservierungsStatus().equals(ReservierungDTO.ReservierungsStatusDTO.GEBUCHT)) {
+                                    kinoService.addReservierung(reservierungDTO);
+                                }
+                            }
+                        }
+
+                    }
+                    case UPDATE -> {
+                        if(response.getEntityType().equals("reservierung")) {
+                            ReservierungDTO reservierungDTO = (ReservierungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType());
+                            if(reservierungDTO.getReservierungsStatus().equals(ReservierungDTO.ReservierungsStatusDTO.GEBUCHT)) {
+                                kinoService.addReservierung(reservierungDTO);
+                            }
                         }
                     }
-                    case BOOK_RESERVIERUNG -> kinoService.addReservierung((ReservierungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
-                    case DELETE_AUFFUEHRUNG -> kinoService.deleteAuffuehrung((Long) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
-                    case DELETE_FILM -> kinoService.deleteFilm((Long) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
-                    case RESET -> kinoService.reset();
+                    case DELETE -> {
+                        switch (response.getEntityType()) {
+                            case "film" -> kinoService.deleteFilm((Long) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
+                            case "auffuehrung" -> kinoService.deleteAuffuehrung((Long) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
+                            case "kino" -> kinoService.reset();
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
@@ -107,9 +111,6 @@ public class StatsListener {
                 }
                 case "auffuehrung" -> {
                     return objectMapper.convertValue(entityMap, AuffuehrungDTO.class);
-                }
-                case "id" -> {
-                    return objectMapper.convertValue(entityMap, Long.class);
                 }
                 default -> throw new IllegalArgumentException("Unbekannter Entity-Typ: " + entityType);
             }

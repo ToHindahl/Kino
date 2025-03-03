@@ -14,10 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Optional;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -44,12 +40,12 @@ public class ReservierungService {
         reservierung.setSitzplatzIds(dto.getSitzplatzIds());
 
         if(dto.getReservierungsStatus() == null) {
-            reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.RESERVED);
+            reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.RESERVIERT);
         } else {
             switch (dto.getReservierungsStatus()) {
-                case RESERVED -> reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.RESERVED);
-                case BOOKED -> reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.BOOKED);
-                case CANCELLED -> reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.CANCELLED);
+                case RESERVIERT -> reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.RESERVIERT);
+                case GEBUCHT -> reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.GEBUCHT);
+                case STORNIERT -> reservierung.setReservierungsStatus(Reservierung.ReservierungsStatus.STORNIERT);
             }
         }
 

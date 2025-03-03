@@ -13,7 +13,7 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**") // Erlaube CORS für alle Endpoints unter /api
+                registry.addMapping("/**") // Erlaube CORS für alle Endpoints unter /api
                         .allowedOrigins("http://localhost:5173") // Erlaube Anfragen von dieser Origin
                         .allowedMethods("GET", "POST", "PUT", "DELETE") // Erlaube diese HTTP-Methoden
                         .allowedHeaders("*") // Erlaube alle Header

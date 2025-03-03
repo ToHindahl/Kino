@@ -26,8 +26,8 @@ public class ReservierungDTO implements Serializable {
     private ReservierungsStatusDTO reservierungsStatus;
 
     public enum ReservierungsStatusDTO {
-        RESERVED,
-        BOOKED,
-        CANCELLED
+        RESERVIERT,
+        GEBUCHT,
+        STORNIERT
     }
 }
