@@ -55,7 +55,7 @@ public class CommandListener {
             response = processCommandRequest(request);
         } catch (Exception e) {
             log.error("Fehler beim Verarbeiten der Nachricht: " + e.getMessage(), e);
-            response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "error",  null);
+            response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "",  null);
         }
 
         // Sende Response zurück an die App
