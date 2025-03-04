@@ -32,5 +32,4 @@ public class KinosaalDTO implements Serializable {
                 ", sitzreihen=" + (sitzreihen != null ? sitzreihen.size() : 0) + " sitzreihen" +
                 '}';
     }
-
 }

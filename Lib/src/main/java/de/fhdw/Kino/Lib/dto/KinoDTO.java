@@ -27,5 +27,4 @@ public class KinoDTO implements Serializable {
                 ", kinosaele=" + (kinosaele != null ? kinosaele.size() : 0) + " kinosaele" +
                 '}';
     }
-
 }

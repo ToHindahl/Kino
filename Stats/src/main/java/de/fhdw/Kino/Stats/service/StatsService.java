@@ -21,14 +21,12 @@ public class StatsService {
                 .flatMap(auffuehrung -> auffuehrung.getReservierungen().stream())
                 .mapToDouble(reservierung -> reservierung.getSitzplatzIds().stream()
                         .mapToDouble(sitzplatzId -> {
-                            // Finde die Kategorie des Sitzplatzes
                             String kategorie = kinoDocument.getSitzplaetze().stream()
                                     .filter(sitzplatz -> sitzplatz.getSitzplatzId().equals(sitzplatzId))
                                     .findFirst()
                                     .map(KinoDocument.Sitzplatz::getKategorie)
                                     .orElseThrow(() -> new RuntimeException("Sitzplatz nicht gefunden"));
 
-                            // Ermittle den Preis basierend auf der Kategorie
                             return SitzreiheDTO.SitzreihenTypDTO.valueOf(kategorie).price;
                         })
                         .sum())
@@ -44,14 +42,12 @@ public class StatsService {
                 .flatMap(auffuehrung -> auffuehrung.getReservierungen().stream())
                 .mapToDouble(reservierung -> reservierung.getSitzplatzIds().stream()
                         .mapToDouble(sitzplatzId -> {
-                            // Finde die Kategorie des Sitzplatzes
                             String kategorie = kinoDocument.getSitzplaetze().stream()
                                     .filter(sitzplatz -> sitzplatz.getSitzplatzId().equals(sitzplatzId))
                                     .findFirst()
                                     .map(KinoDocument.Sitzplatz::getKategorie)
                                     .orElseThrow(() -> new RuntimeException("Sitzplatz nicht gefunden"));
 
-                            // Ermittle den Preis basierend auf der Kategorie
                             return SitzreiheDTO.SitzreihenTypDTO.valueOf(kategorie).price;
                         })
                         .sum())

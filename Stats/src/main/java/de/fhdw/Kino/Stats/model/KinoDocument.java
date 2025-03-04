@@ -10,7 +10,6 @@ import java.util.List;
 @Data
 @Document
 public class KinoDocument {
-
     @Id
     private Long kinoId;
 

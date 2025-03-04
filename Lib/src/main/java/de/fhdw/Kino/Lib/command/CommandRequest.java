@@ -31,6 +31,4 @@ public class CommandRequest implements Serializable {
         COMMIT,
         BEGINN
     }
-
-
 }

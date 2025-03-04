@@ -3,12 +3,10 @@ package de.fhdw.Kino.DB.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import de.fhdw.Kino.DB.repository.FilmRepository;
 import de.fhdw.Kino.Lib.dto.AuffuehrungDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 

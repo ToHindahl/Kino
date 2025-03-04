@@ -18,7 +18,6 @@ public class Reservierung {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long reservierungId;
 
-    // Speicherung der Sitzplatz-IDs zur Entkopplung
     @ElementCollection
     @NotEmpty(message = "Es muss mindestens ein Sitzplatz reserviert werden.")
     private List<Long> sitzplatzIds = new ArrayList<>();
@@ -60,7 +59,8 @@ public class Reservierung {
     }
 
     public ReservierungDTO toDTO() {
-        return new ReservierungDTO(this.reservierungId, this.sitzplatzIds, this.auffuehrung.getAuffuehrungId(), this.kunde.getKundeId(), this.getReservierungsStatusDTO());
+        return new ReservierungDTO(this.reservierungId, this.sitzplatzIds, this.auffuehrung.getAuffuehrungId(),
+                this.kunde.getKundeId(), this.getReservierungsStatusDTO());
     }
 }
 

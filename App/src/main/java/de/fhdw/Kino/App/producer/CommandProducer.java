@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 @Slf4j
@@ -19,8 +18,6 @@ import java.util.List;
 public class CommandProducer {
 
     private final RabbitTemplate rabbitTemplate;
-
-    // In CommandProducer.java
 
     public CommandResponse sendCommandRequest(CommandRequest request) {
         CommandResponse response = (CommandResponse) rabbitTemplate.convertSendAndReceive(
@@ -71,5 +68,4 @@ public class CommandProducer {
             throw new RuntimeException("Fehler beim Deserialisieren des entity-Felds: " + e.getMessage(), e);
         }
     }
-
 }

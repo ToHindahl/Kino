@@ -21,13 +21,9 @@ import java.util.Optional;
 public class KinoService {
 
     private final KinoRepository kinoRepository;
-
     private final KundeRepository kundeRepository;
-
     private final ReservierungRepository reservierungRepository;
-
     private final AuffuehrungRepository auffuehrungRepository;
-
     private final FilmRepository filmRepository;
 
     @Transactional
@@ -80,5 +76,4 @@ public class KinoService {
         filmRepository.deleteAll();
         return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "reset", "null");
     }
-
 }

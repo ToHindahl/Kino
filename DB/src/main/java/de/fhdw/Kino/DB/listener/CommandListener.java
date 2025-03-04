@@ -16,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -44,45 +42,41 @@ public class CommandListener {
     @Autowired
     private ReservierungService reservierungService;
 
-
     @Transactional
     @RabbitListener(queues = RabbitMQConfig.COMMAND_DB_QUEUE)
     public void handleCommandRequest(CommandRequest request, Message message) {
 
         CommandResponse response;
         try {
-            // Verarbeite die Nachricht
             response = processCommandRequest(request);
         } catch (Exception e) {
             log.error("Fehler beim Verarbeiten der Nachricht: " + e.getMessage(), e);
             response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "",  null);
         }
 
-        // Sende Response zurück an die App
+        // Rücksendung der Response an App und Stats
         String replyTo = message.getMessageProperties().getReplyTo();
         String correlationId = message.getMessageProperties().getCorrelationId();
         if (replyTo != null && correlationId != null) {
             rabbitTemplate.convertAndSend(replyTo, response, m -> {
-                m.getMessageProperties().setCorrelationId(correlationId); // ✅ Korrelation beibehalten
+                m.getMessageProperties().setCorrelationId(correlationId);
                 return m;
             });
-            // Sende die Response auch an den Response-Exchange für Stats
             rabbitTemplate.convertAndSend(RabbitMQConfig.RESPONSE_FANOUT_EXCHANGE, "", response, m -> {
-                m.getMessageProperties().setCorrelationId(correlationId); // ✅ Korrelation beibehalten
+                m.getMessageProperties().setCorrelationId(correlationId);
                 return m;
             });
         }
     }
 
     private CommandResponse processCommandRequest(CommandRequest request) {
+
         log.info("DB-Modul: CRUD-Request empfangen - " + request.toString());
 
         CommandResponse response;
-
         try {
             Object entity = request.getEntity();
             if (entity instanceof LinkedHashMap) {
-                // Deserialisiere das entity-Feld basierend auf dem Typnamen
                 entity = deserializeEntity((LinkedHashMap<?, ?>) entity, request.getEntityType());
             }
 
@@ -135,7 +129,6 @@ public class CommandListener {
                 }
                 default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Unbekannte Operation", "error", null);
             }
-
         } catch (Exception e) {
             log.error("Fehler beim Verarbeiten der Nachricht: " + e.getMessage(), e);
             response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "error", null);
@@ -145,8 +138,8 @@ public class CommandListener {
     }
 
     private Object deserializeEntity(LinkedHashMap<?, ?> entityMap, String entityType) {
-        ObjectMapper objectMapper = new ObjectMapper();
 
+        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
         try {

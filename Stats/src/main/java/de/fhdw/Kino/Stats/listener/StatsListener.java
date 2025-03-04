@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class StatsListener {
 
     private final ConcurrentHashMap<String, CommandRequest> requestMap = new ConcurrentHashMap<>();
-
     private final KinoService kinoService;
 
     @RabbitListener(queues = RabbitMQConfig.COMMAND_STATS_QUEUE)
@@ -51,7 +50,6 @@ public class StatsListener {
 
     private void processRequestResponsePair(CommandRequest request, CommandResponse response) {
          try {
-
             if(response.getStatus().equals(CommandResponse.CommandStatus.SUCCESS)) {
                 switch (request.getOperation()) {
                     case CREATE -> {
@@ -66,7 +64,6 @@ public class StatsListener {
                                 }
                             }
                         }
-
                     }
                     case UPDATE -> {
                         if(response.getEntityType().equals("reservierung")) {
@@ -92,7 +89,6 @@ public class StatsListener {
 
     private Object deserializeEntity(LinkedHashMap<?, ?> entityMap, String entityType) {
         ObjectMapper objectMapper = new ObjectMapper();
-
         objectMapper.registerModule(new JavaTimeModule());
 
         try {

@@ -32,7 +32,6 @@ public class Kino {
             KinosaalDTO kinosaalDTO = new KinosaalDTO(kinosaal.getKinosaalId(), kinosaal.getName(), kinoDTO, new ArrayList<>());
             kinosaal.getSitzreihen().forEach(reihe -> {
                 SitzreiheDTO sitzreiheDTO = new SitzreiheDTO(reihe.getSitzreiheId(), reihe.getSitzreihenTypDTO(), reihe.getBezeichnung(), kinosaalDTO, new ArrayList<>());
-
                 reihe.getSitzplaetze().forEach(sitzplatz -> {
                     SitzplatzDTO sitzplatzDTO = new SitzplatzDTO(sitzplatz.getSitzplatzId(), sitzplatz.getNummer(), sitzreiheDTO);
                     sitzreiheDTO.getSitzplaetze().add(sitzplatzDTO);

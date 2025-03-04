@@ -35,12 +35,14 @@ public class VorstellungController {
         return new ResponseEntity<>(filmService.createFilm(film), HttpStatus.CREATED);
     }
 
+    // Endpunkt zum Löschen eines Films
     @DeleteMapping("/film/{id}")
     public ResponseEntity<Void> deleteFilm(@PathVariable Long id) {
         filmService.deleteFilm(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // Endpunkt zum Abrufen aller Aufführungen
     @GetMapping("/auffuehrungen")
     public List<AuffuehrungDTO> getAuffuehrung(
             @RequestParam(name = "datum", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datum) {
@@ -53,16 +55,16 @@ public class VorstellungController {
         return auffuehrungDTOs;
     }
 
+    // Endpunkt zum Anlegen einer Aufführung
     @PostMapping("/auffuehrung")
     public ResponseEntity<AuffuehrungDTO> createAuffuehrung(@Valid @RequestBody AuffuehrungDTO auffuehrung) {
         return new ResponseEntity<>(auffuehrungService.createAuffuehrung(auffuehrung), HttpStatus.CREATED);
     }
 
+    // Endpunkt zum Löschen einer Aufführung
     @DeleteMapping("/auffuehrung/{id}")
     public ResponseEntity<Void> deleteAuffuehrung(@PathVariable Long id) {
         auffuehrungService.deleteAuffuehrung(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 }

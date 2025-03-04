@@ -34,7 +34,6 @@ public class SitzreiheDTO implements Serializable {
         PARKETT(7.50);
 
         public final Double price;
-
         SitzreihenTypDTO(Double price) {
             this.price = price;
         }

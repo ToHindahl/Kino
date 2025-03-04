@@ -15,23 +15,25 @@ public class ReservierungController {
     @Autowired
     private ReservierungService reservierungService;
 
+    // Endpunkt zum Anlegen einer Reservierung
     @PostMapping
     public ResponseEntity<?> createReservierung(@Valid @RequestBody ReservierungDTO req) {
         return new ResponseEntity<>(reservierungService.createReservierung(req), HttpStatus.CREATED);
     }
 
-    // Umwandlung von Reservierung in Buchung
+    // Endpunkt zum Buchen einer Reservierung
     @PutMapping("/{id}/buchen")
     public ResponseEntity<?> bookReservierung(@PathVariable Long id) {
         return new ResponseEntity<>(reservierungService.bookReservierung(id), HttpStatus.CREATED);
     }
 
-    // Reservierung stornieren
+    // Endpunkt zum Stornieren einer Reservierung
     @PutMapping("/{id}/stornieren")
     public ResponseEntity<?> cancelReservierung(@PathVariable Long id) {
         return new ResponseEntity<>(reservierungService.cancelReservierung(id), HttpStatus.CREATED);
     }
 
+    // Endpunkt zum Abrufen aller Reservierungen
     @GetMapping
     public ResponseEntity<?> getReservierungen() {
         return new ResponseEntity<>(reservierungService.getReservierungen(), HttpStatus.OK);

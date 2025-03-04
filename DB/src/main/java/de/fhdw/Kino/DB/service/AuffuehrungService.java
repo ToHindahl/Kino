@@ -19,9 +19,7 @@ import java.util.List;
 public class AuffuehrungService {
 
     private final AuffuehrungRepository auffuehrungRepository;
-
     private final FilmRepository filmRepository;
-
     private final KinoRepository kinoRepository;
 
     @Transactional

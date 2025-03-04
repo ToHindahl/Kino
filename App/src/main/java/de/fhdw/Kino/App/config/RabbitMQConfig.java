@@ -17,19 +17,15 @@ public class RabbitMQConfig {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 
         // Timeout für Antworten (in Millisekunden)
-        rabbitTemplate.setReplyTimeout(5000); // 5 Sekunden
-
+        rabbitTemplate.setReplyTimeout(5000);
         rabbitTemplate.setMessageConverter(jsonMessageConverter());
-
         return rabbitTemplate;
     }
 
     @Bean
     public MessageConverter jsonMessageConverter() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // Register JavaTimeModule
+        objectMapper.registerModule(new JavaTimeModule());
         return new Jackson2JsonMessageConverter(objectMapper);
     }
-
-
 }

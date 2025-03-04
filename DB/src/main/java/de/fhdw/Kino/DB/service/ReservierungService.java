@@ -20,11 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservierungService {
 
     private final ReservierungRepository reservierungRepository;
-
     private final KundeRepository kundeRepository;
-
     private final AuffuehrungRepository auffuehrungRepository;
-
     private final KinoRepository kinoRepository;
 
     @Transactional

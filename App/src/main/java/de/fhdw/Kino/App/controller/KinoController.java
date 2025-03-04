@@ -15,22 +15,22 @@ public class KinoController {
     @Autowired
     private KinoService kinoService;
 
-    // Endpunkt zur Initialisierung eines Kinos inkl. Säle, Reihen und Sitzplätzen
+    // Endpunkt zur Initialisierung eines Kinos inkl. Kinosäle, Sitzreihen und Sitzplätzen
     @PostMapping()
     public ResponseEntity<KinoDTO> initializeKino(@Valid @RequestBody KinoDTO dto) {
         return new ResponseEntity<>(kinoService.createKino(dto), HttpStatus.CREATED);
     }
 
+    // Endpunkt zum Abrufen des Kinos
     @GetMapping
     public KinoDTO getKino() {
         return kinoService.getKino();
     }
 
+    // Endpunkt zum Löschen des Kinos
     @DeleteMapping("/reset")
     public ResponseEntity<Void> deleteKino() {
         kinoService.deleteKino();
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 }

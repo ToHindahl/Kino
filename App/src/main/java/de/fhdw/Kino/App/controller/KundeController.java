@@ -15,17 +15,20 @@ public class KundeController {
     @Autowired
     private KundeService kundeService;
 
+    // Endpunkt zum Anlegen eines Kunden
     @PostMapping("/kunde")
     public ResponseEntity<KundeDTO> createKunde(@Valid @RequestBody KundeDTO dto) {
         return new ResponseEntity<>(kundeService.createKunde(dto), HttpStatus.CREATED);
     }
 
+    // Endpunkt zum Löschen eines Kunden
     @DeleteMapping("/kunde/{id}")
     public ResponseEntity<Void> deleteKunde(@PathVariable Long id) {
         kundeService.deleteKunde(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // Endpunkt zum Abrufen aller Kunden
     @GetMapping("/kunden")
     public ResponseEntity<?> getKunden() {
         return new ResponseEntity<>(kundeService.getAllKunden(), HttpStatus.OK);

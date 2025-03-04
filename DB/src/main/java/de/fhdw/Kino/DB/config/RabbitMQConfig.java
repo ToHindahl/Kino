@@ -44,7 +44,6 @@ public class RabbitMQConfig {
         return new Jackson2JsonMessageConverter(objectMapper);
     }
 
-
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
@@ -53,5 +52,4 @@ public class RabbitMQConfig {
 
         return rabbitTemplate;
     }
-
 }
