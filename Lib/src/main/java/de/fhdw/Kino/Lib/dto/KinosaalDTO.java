@@ -31,7 +31,7 @@ public class KinosaalDTO implements Serializable {
         return "KinosaalDTO{" +
                 "kinosaalId=" + kinosaalId +
                 ", name='" + name + '\'' +
-                ", sitzreihen=" + (sitzreihen != null ? sitzreihen.size() : 0) + " sitzreihen" +
+                ", sitzreihen=" + (sitzreihen.size()) + " sitzreihen" +
                 '}';
     }
 

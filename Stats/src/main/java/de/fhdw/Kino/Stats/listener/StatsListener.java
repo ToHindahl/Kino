@@ -28,7 +28,7 @@ public class StatsListener {
     public void handleCommandRequest(CommandRequest request, Message message) {
         String correlationId = message.getMessageProperties().getCorrelationId();
         if (correlationId != null) {
-            requestMap.put(correlationId, request); // Speichere den Request
+            requestMap.put(correlationId, request);
             log.info("Stats empfängt Request mit correlationId {}: {}", correlationId, request);
         }
     }
@@ -40,8 +40,8 @@ public class StatsListener {
             CommandRequest request = requestMap.get(correlationId);
             if (request != null) {
                 log.info("Stats empfängt Response mit correlationId {}: {}", correlationId, response);
-                processRequestResponsePair(request, response); // Verarbeite Request und Response
-                requestMap.remove(correlationId); // Entferne den Request aus der Map
+                processRequestResponsePair(request, response);
+                requestMap.remove(correlationId);
             } else {
                 log.warn("Kein Request für correlationId {} gefunden.", correlationId);
             }
@@ -74,10 +74,10 @@ public class StatsListener {
                         }
                     }
                     case DELETE -> {
-                        switch (response.getEntityType()) {
-                            case "film" -> kinoService.deleteFilm((Long) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
-                            case "auffuehrung" -> kinoService.deleteAuffuehrung((Long) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
-                            case "kino" -> kinoService.reset();
+                        switch (request.getEntityType()) {
+                            case "FILM" -> kinoService.deleteFilm(((FilmDTO) deserializeEntity((LinkedHashMap<?, ?>) request.getEntity(), request.getEntityType())).getFilmId());
+                            case "AUFFUEHRUNG" -> kinoService.deleteAuffuehrung(((AuffuehrungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType())).getAuffuehrungId());
+                            case "KINO" -> kinoService.reset();
                         }
                     }
                 }
@@ -102,10 +102,10 @@ public class StatsListener {
                 case "kunde" -> {
                     return objectMapper.convertValue(entityMap, KundeDTO.class);
                 }
-                case "film" -> {
+                case "film", "FILM" -> {
                     return objectMapper.convertValue(entityMap, FilmDTO.class);
                 }
-                case "auffuehrung" -> {
+                case "auffuehrung", "AUFFUEHRUNG" -> {
                     return objectMapper.convertValue(entityMap, AuffuehrungDTO.class);
                 }
                 default -> throw new IllegalArgumentException("Unbekannter Entity-Typ: " + entityType);

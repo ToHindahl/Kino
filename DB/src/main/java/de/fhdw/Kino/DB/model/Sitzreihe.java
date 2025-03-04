@@ -34,14 +34,14 @@ public class Sitzreihe {
     @Valid
     private List<Sitzplatz> sitzplaetze = new ArrayList<>();
 
+    @Version
+    private Long version;
+
     public enum SitzreihenTyp {
         LOGE_MIT_SERVICE,
         LOGE,
         PARKETT
     }
-
-    @Version
-    private Long version;
 
     public SitzreiheDTO.SitzreihenTypDTO getSitzreihenTypDTO() {
         return switch (sitzreihenTyp) {

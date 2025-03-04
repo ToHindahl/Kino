@@ -121,11 +121,11 @@ public class CommandListener {
                         default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für DELETE", "");
                     }
                 }
-                default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Unbekannte Operation", "error", null);
+                default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Unbekannte Operation", "");
             }
         } catch (Exception e) {
             log.error("Fehler beim Verarbeiten der Nachricht: " + e.getMessage(), e);
-            response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "error", null);
+            response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "");
         }
 
         return response;

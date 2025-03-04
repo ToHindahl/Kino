@@ -26,7 +26,7 @@ public class KinoDTO implements Serializable {
         return "KinoDTO{" +
                 "kinoId=" + kinoId +
                 ", name='" + name + '\'' +
-                ", kinosaele=" + (kinosaele != null ? kinosaele.size() : 0) + " kinosaele" +
+                ", kinosaele=" + (kinosaele.size()) + " kinosaele" +
                 '}';
     }
 

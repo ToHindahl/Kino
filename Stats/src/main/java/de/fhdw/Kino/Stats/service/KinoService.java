@@ -33,7 +33,7 @@ public class KinoService {
     }
 
     public void addFilm(FilmDTO filmDTO) {
-        KinoDocument kinoDocument = kinoRepository.findById(1L).orElseThrow(() -> new RuntimeException("Kino nicht gefunden"));
+        KinoDocument kinoDocument = kinoRepository.findAll().stream().findFirst().orElseThrow(() -> new RuntimeException("Kino nicht gefunden"));
         KinoDocument.Film film = new KinoDocument.Film();
         film.setFilmId(filmDTO.getFilmId());
         film.setAuffuehrungen(List.of());
@@ -43,7 +43,7 @@ public class KinoService {
     }
 
     public void addAuffuehrung(AuffuehrungDTO auffuehrungDTO) {
-        KinoDocument kinoDocument = kinoRepository.findById(1L).orElseThrow(() -> new RuntimeException("Kino nicht gefunden"));
+        KinoDocument kinoDocument = kinoRepository.findAll().stream().findFirst().orElseThrow(() -> new RuntimeException("Kino nicht gefunden"));
         KinoDocument.Auffuehrung auffuehrung = new KinoDocument.Auffuehrung();
         auffuehrung.setAuffuehrungId(auffuehrungDTO.getAuffuehrungId());
         auffuehrung.setReservierungen(List.of());
@@ -57,7 +57,7 @@ public class KinoService {
     }
 
     public void addReservierung(ReservierungDTO reservierungDTO) {
-        KinoDocument kinoDocument = kinoRepository.findById(1L).orElseThrow(() -> new RuntimeException("Kino nicht gefunden"));
+        KinoDocument kinoDocument = kinoRepository.findAll().stream().findFirst().orElseThrow(() -> new RuntimeException("Kino nicht gefunden"));
         KinoDocument.Reservierung reservierung = new KinoDocument.Reservierung();
         reservierung.setSitzplatzIds(reservierungDTO.getSitzplatzIds());
 
@@ -71,14 +71,14 @@ public class KinoService {
     }
 
     public void deleteAuffuehrung(Long id) {
-        KinoDocument kinoDocument = kinoRepository.findById(1L).orElseThrow(() -> new RuntimeException("Kino nicht gefunden"));
+        KinoDocument kinoDocument = kinoRepository.findAll().stream().findFirst().orElseThrow(() -> new RuntimeException("Kino nicht gefunden"));
         kinoDocument.getFilme().forEach(film -> film.getAuffuehrungen().removeIf(auffuehrung -> auffuehrung.getAuffuehrungId().equals(id)));
 
         kinoRepository.save(kinoDocument);
     }
 
     public void deleteFilm(Long id) {
-        KinoDocument kinoDocument = kinoRepository.findById(1L).orElseThrow(() -> new RuntimeException("Kino nicht gefunden"));
+        KinoDocument kinoDocument = kinoRepository.findAll().stream().findFirst().orElseThrow(() -> new RuntimeException("Kino nicht gefunden"));
         kinoDocument.getFilme().removeIf(film -> film.getFilmId().equals(id));
 
         kinoRepository.save(kinoDocument);
