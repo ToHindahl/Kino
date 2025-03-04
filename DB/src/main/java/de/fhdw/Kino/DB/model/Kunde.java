@@ -15,13 +15,13 @@ public class Kunde {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long kundeId;
 
-    @NotNull(message = "Vorname darf nicht leer sein.")
+    @NotNull(message = "Vorname darf nicht leer sein")
     private String vorname;
 
-    @NotNull(message = "Nachname darf nicht leer sein.")
+    @NotNull(message = "Nachname darf nicht leer sein")
     private String nachname;
 
-    @NotNull(message = "E-Mail darf nicht leer sein.")
+    @NotNull(message = "E-Mail darf nicht leer sein")
     private String email;
 
     @Version

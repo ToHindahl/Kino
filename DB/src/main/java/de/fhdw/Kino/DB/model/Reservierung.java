@@ -19,21 +19,21 @@ public class Reservierung {
     private Long reservierungId;
 
     @ElementCollection
-    @NotEmpty(message = "Es muss mindestens ein Sitzplatz reserviert werden.")
+    @NotEmpty(message = "Es muss mindestens ein Sitzplatz reserviert werden")
     private List<Long> sitzplatzIds = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "AUFFUEHRUNG_ID")
-    @NotNull(message = "Aufführung darf nicht leer sein.")
+    @NotNull(message = "Aufführung darf nicht leer sein")
     private Auffuehrung auffuehrung;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "KUNDE_ID")
-    @NotNull(message = "Kunde darf nicht leer sein.")
+    @NotNull(message = "Kunde darf nicht leer sein")
     private Kunde kunde;
 
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "Reservierungsstatus darf nicht leer sein.")
+    @NotNull(message = "Reservierungsstatus darf nicht leer sein")
     private ReservierungsStatus reservierungsStatus;
 
     @Version

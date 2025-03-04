@@ -16,12 +16,12 @@ public class Sitzplatz {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long sitzplatzId;
 
-    @Min(value = 1, message = "Die Nummer muss mindestens 1 sein.")
+    @Min(value = 1, message = "Nummer muss mindestens 1 sein")
     private int nummer;
 
     @ManyToOne
     @JoinColumn(name = "REIHE_ID")
-    @NotNull(message = "Sitzreihe darf nicht leer sein.")
+    @NotNull(message = "Sitzreihe darf nicht leer sein")
     private Sitzreihe sitzreihe;
 
     @Version

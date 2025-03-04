@@ -19,7 +19,7 @@ public class Film {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long filmId;
 
-    @NotNull(message = "Titel darf nicht leer sein.")
+    @NotNull(message = "Titel darf nicht leer sein")
     private String titel;
 
     @Version

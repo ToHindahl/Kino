@@ -18,7 +18,7 @@ public class Kino {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long kinoId;
 
-    @NotNull(message = "Name darf nicht leer sein.")
+    @NotNull(message = "Name darf nicht leer sein")
     private String name;
 
     @OneToMany(mappedBy = "kino", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -23,14 +23,14 @@ public class Kinosaal {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long kinosaalId;
 
-    @NotNull(message = "Name darf nicht leer sein.")
+    @NotNull(message = "Name darf nicht leer sein")
     private String name;
 
     @ManyToOne
     @JoinColumn(name = "KINO_ID")
     @JsonIdentityReference(alwaysAsId = true)
-    @NotNull(message = "Kino darf nicht leer sein.")
-    private Kino kino; // Umbenannt von 'kinosaalKino' zu 'kino'
+    @NotNull(message = "Kino darf nicht leer sein")
+    private Kino kino;
 
     @OneToMany(mappedBy = "kinosaal", cascade = CascadeType.ALL, orphanRemoval = true)
     @Valid

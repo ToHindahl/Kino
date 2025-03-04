@@ -22,22 +22,22 @@ public class Auffuehrung {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long auffuehrungId;
 
-    @NotNull(message = "Startzeit darf nicht leer sein.")
+    @NotNull(message = "Startzeit darf nicht leer sein")
     private LocalDateTime startzeit;
 
-    @NotNull(message = "Startzeit darf nicht leer sein.")
+    @NotNull(message = "Startzeit darf nicht leer sein")
     private LocalDateTime endzeit;
 
     @ManyToOne
     @JoinColumn(name = "FILM_ID")
     @JsonIdentityReference(alwaysAsId = true)
-    @NotNull(message = "Film-ID darf nicht leer sein.")
+    @NotNull(message = "Film-ID darf nicht leer sein")
     private Film film;
 
     @ManyToOne
     @JoinColumn(name = "KINOSAAL_ID")
     @JsonIdentityReference(alwaysAsId = true)
-    @NotNull(message = "Kinosaal darf nicht leer sein.")
+    @NotNull(message = "Kinosaal darf nicht leer sein")
     private Kinosaal kinosaal;
 
     @Version

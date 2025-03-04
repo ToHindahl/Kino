@@ -19,15 +19,15 @@ public class Sitzreihe {
     private Long sitzreiheId;
 
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "Reihentyp darf nicht leer sein.")
+    @NotNull(message = "Reihentyp darf nicht leer sein")
     private SitzreihenTyp sitzreihenTyp;
 
-    @NotNull(message = "Bezeichnung darf nicht leer sein.")
+    @NotNull(message = "Bezeichnung darf nicht leer sein")
     private String bezeichnung;
 
     @ManyToOne
     @JoinColumn(name = "KINOSAAL_ID")
-    @NotNull(message = "Kinosaal darf nicht leer sein.")
+    @NotNull(message = "Kinosaal darf nicht leer sein")
     private Kinosaal kinosaal;
 
     @OneToMany(mappedBy = "sitzreihe", cascade = CascadeType.ALL, orphanRemoval = true)
