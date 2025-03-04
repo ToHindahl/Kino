@@ -20,4 +20,6 @@ public class SitzplatzDTO implements Serializable {
     @NonNull
     @JsonIgnore
     private SitzreiheDTO sitzreihe;
+
+    private Long version;
 }

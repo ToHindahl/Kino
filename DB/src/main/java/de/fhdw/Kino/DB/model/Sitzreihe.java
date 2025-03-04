@@ -40,6 +40,9 @@ public class Sitzreihe {
         PARKETT
     }
 
+    @Version
+    private Long version;
+
     public SitzreiheDTO.SitzreihenTypDTO getSitzreihenTypDTO() {
         return switch (sitzreihenTyp) {
             case LOGE_MIT_SERVICE -> SitzreiheDTO.SitzreihenTypDTO.LOGE_MIT_SERVICE;
@@ -49,6 +52,6 @@ public class Sitzreihe {
     }
 
     public SitzreiheDTO toDTO() {
-        return new SitzreiheDTO(this.sitzreiheId, this.getSitzreihenTypDTO(), this.bezeichnung, this.kinosaal.toDTO(), this.sitzplaetze.stream().map(Sitzplatz::toDTO).toList());
+        return new SitzreiheDTO(this.sitzreiheId, this.getSitzreihenTypDTO(), this.bezeichnung, this.kinosaal.toDTO(), this.sitzplaetze.stream().map(Sitzplatz::toDTO).toList(), this.getVersion());
     }
 }

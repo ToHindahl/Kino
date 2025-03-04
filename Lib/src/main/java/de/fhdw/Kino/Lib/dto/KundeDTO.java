@@ -21,4 +21,7 @@ public class KundeDTO  implements Serializable {
 
     @NonNull
     private String email;
+
+    private Long version;
+
 }

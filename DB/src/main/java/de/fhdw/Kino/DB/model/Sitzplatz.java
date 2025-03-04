@@ -24,7 +24,10 @@ public class Sitzplatz {
     @NotNull(message = "Sitzreihe darf nicht leer sein.")
     private Sitzreihe sitzreihe;
 
+    @Version
+    private Long version;
+
     public SitzplatzDTO toDTO() {
-        return new SitzplatzDTO(this.sitzplatzId, this.nummer, this.sitzreihe.toDTO());
+        return new SitzplatzDTO(this.sitzplatzId, this.nummer, this.sitzreihe.toDTO(), this.getVersion());
     }
 }

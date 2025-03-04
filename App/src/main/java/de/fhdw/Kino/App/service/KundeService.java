@@ -21,7 +21,7 @@ public class KundeService {
         UUID transactionId = UUID.randomUUID();
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "KINO", null));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType() == "null") {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType().equals("null")) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
@@ -40,13 +40,13 @@ public class KundeService {
         UUID transactionId = UUID.randomUUID();
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "KINO", null));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType() == "null") {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType().equals("null")) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
         }
 
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ_ALL, "KUNDE", ""));
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "KUNDENLISTE", ""));
         if (response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.getMessage());
         }
@@ -59,20 +59,20 @@ public class KundeService {
         UUID transactionId = UUID.randomUUID();
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "KINO", null));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType() == "null") {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType().equals("null")) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
         }
 
         CommandResponse kundeResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "KUNDE", id));
-        if (kundeResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kundeResponse.getEntityType() == "null") {
+        if (kundeResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kundeResponse.getEntityType().equals("null")) {
             throw new RuntimeException("Kunde nicht gefunden");
         } else if(kundeResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kundeResponse.getMessage());
         }
 
-        CommandResponse reservierungenResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ_ALL, "RESERVIERUNG", null));
+        CommandResponse reservierungenResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "RESERVIERUNGSLISTE", null));
         if (reservierungenResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(reservierungenResponse.getMessage());
         }

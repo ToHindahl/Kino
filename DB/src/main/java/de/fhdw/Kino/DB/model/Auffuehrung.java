@@ -40,7 +40,10 @@ public class Auffuehrung {
     @NotNull(message = "Kinosaal darf nicht leer sein.")
     private Kinosaal kinosaal;
 
+    @Version
+    private Long version;
+
     public AuffuehrungDTO toDTO() {
-        return new AuffuehrungDTO(this.auffuehrungId, this.startzeit, this.endzeit, this.film.getFilmId(), this.kinosaal.getKinosaalId());
+        return new AuffuehrungDTO(this.auffuehrungId, this.startzeit, this.endzeit, this.film.getFilmId(), this.kinosaal.getKinosaalId(), this.getVersion());
     }
 }

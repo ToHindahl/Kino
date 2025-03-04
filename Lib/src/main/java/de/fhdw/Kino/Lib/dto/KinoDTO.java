@@ -19,6 +19,8 @@ public class KinoDTO implements Serializable {
     @NonNull
     private List<KinosaalDTO> kinosaele;
 
+    private Long version;
+
     @Override
     public String toString() {
         return "KinoDTO{" +
@@ -27,4 +29,5 @@ public class KinoDTO implements Serializable {
                 ", kinosaele=" + (kinosaele != null ? kinosaele.size() : 0) + " kinosaele" +
                 '}';
     }
+
 }

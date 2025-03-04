@@ -25,6 +25,8 @@ public class ReservierungDTO implements Serializable {
 
     private ReservierungsStatusDTO reservierungsStatus;
 
+    private Long version;
+
     public enum ReservierungsStatusDTO {
         RESERVIERT,
         GEBUCHT,

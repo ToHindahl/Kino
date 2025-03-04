@@ -3,6 +3,7 @@ package de.fhdw.Kino.DB.service;
 import de.fhdw.Kino.DB.model.Auffuehrung;
 import de.fhdw.Kino.DB.model.Film;
 import de.fhdw.Kino.DB.model.Kinosaal;
+import de.fhdw.Kino.DB.model.Kunde;
 import de.fhdw.Kino.DB.repository.AuffuehrungRepository;
 import de.fhdw.Kino.DB.repository.FilmRepository;
 import de.fhdw.Kino.DB.repository.KinoRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -41,7 +43,8 @@ public class AuffuehrungService {
 
     @Transactional
     public CommandResponse handleAuffuehrungRequest(Long id) {
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "auffuehrung", auffuehrungRepository.findById(id).get().toDTO());
+        Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(id);
+        return auffuehrung.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "auffuehrung", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null"));
     }
 
     @Transactional
@@ -51,6 +54,15 @@ public class AuffuehrungService {
 
     @Transactional
     public CommandResponse handleAuffuehrungDeletion(AuffuehrungDTO dto) {
+        Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(dto.getAuffuehrungId());
+        if(auffuehrung.isEmpty()) {
+            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null");
+        }
+
+        if(!dto.getVersion().equals(auffuehrung.get().getVersion())) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", "null");
+        }
+
         auffuehrungRepository.deleteById(dto.getAuffuehrungId());
         return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "deleted", "null");
     }

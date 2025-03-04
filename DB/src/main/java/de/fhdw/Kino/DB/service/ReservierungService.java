@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -53,17 +55,24 @@ public class ReservierungService {
 
     @Transactional
     public CommandResponse handleReservierungUpdate(ReservierungDTO dto) {
+        Optional<Reservierung> reservierung = reservierungRepository.findById(dto.getReservierungId());
+        if(reservierung.isEmpty()) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "not found", "null");
+        }
 
-        Reservierung reservierung = reservierungRepository.findById(dto.getReservierungId()).get();
-        reservierung.setReservierungsStatus(reservierung.getReservierungsStatusFromDTO(dto.getReservierungsStatus()));
-        reservierungRepository.save(reservierung);
+        if(!dto.getVersion().equals(reservierung.get().getVersion())) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", "null");
+        }
 
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "updated", "reservierung", reservierung.toDTO());
+        reservierung.get().setReservierungsStatus(reservierung.get().getReservierungsStatusFromDTO(dto.getReservierungsStatus()));
+        reservierungRepository.save(reservierung.get());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "updated", "reservierung", reservierung.get().toDTO());
     }
 
     @Transactional
     public CommandResponse handleReservierungRequest(Long id) {
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "reservierung", reservierungRepository.findById(id).get().toDTO());
+        Optional<Reservierung> reservierung = reservierungRepository.findById(id);
+        return reservierung.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "reservierung", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null"));
     }
 
     @Transactional
@@ -73,6 +82,15 @@ public class ReservierungService {
 
     @Transactional
     public CommandResponse handleReservierungDeletion(ReservierungDTO dto) {
+        Optional<Reservierung> reservierung = reservierungRepository.findById(dto.getReservierungId());
+        if(reservierung.isEmpty()) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "not found", "null");
+        }
+
+        if(!dto.getVersion().equals(reservierung.get().getVersion())) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", "null");
+        }
+
         reservierungRepository.deleteById(dto.getReservierungId());
         return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"deleted", "null");
     }

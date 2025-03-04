@@ -28,4 +28,6 @@ public class AuffuehrungDTO implements Serializable {
 
     @NonNull
     private Long kinosaalId;
+
+    private Long version;
 }

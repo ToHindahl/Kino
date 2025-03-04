@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +28,8 @@ public class FilmService {
 
     @Transactional
     public CommandResponse handleFilmRequest(Long id) {
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "film", filmRepository.findById(id).get().toDTO());
+        Optional<Film> film = filmRepository.findById(id);
+        return film.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "film", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null"));
     }
 
     @Transactional

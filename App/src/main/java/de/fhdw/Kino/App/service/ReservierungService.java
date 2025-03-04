@@ -54,7 +54,7 @@ public class ReservierungService {
             throw new RuntimeException("Aufführung noch nicht gestartet");
         }
 
-        CommandResponse reservierungenResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ_ALL, "RESERVIERUNG", null));
+        CommandResponse reservierungenResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "RESERVIERUNGSLISTE", null));
         if(reservierungenResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(reservierungenResponse.getMessage());
         }
@@ -163,7 +163,7 @@ public class ReservierungService {
             throw new RuntimeException(kinoResponse.getMessage());
         }
 
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ_ALL, "RESERVIERUNG", null));
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "RESERVIERUNGSLISTE", null));
         if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.getMessage());
         }

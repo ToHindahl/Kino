@@ -22,7 +22,10 @@ public class Film {
     @NotNull(message = "Titel darf nicht leer sein.")
     private String titel;
 
+    @Version
+    private Long version;
+
     public FilmDTO toDTO() {
-        return new FilmDTO(this.filmId, this.titel);
+        return new FilmDTO(this.filmId, this.titel, this.getVersion());
     }
 }

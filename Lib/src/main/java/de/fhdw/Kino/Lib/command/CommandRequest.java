@@ -25,10 +25,7 @@ public class CommandRequest implements Serializable {
     public enum Operation {
         CREATE,
         READ,
-        READ_ALL,
         UPDATE,
-        DELETE,
-        COMMIT,
-        BEGINN
+        DELETE
     }
 }

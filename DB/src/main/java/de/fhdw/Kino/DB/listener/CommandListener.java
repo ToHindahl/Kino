@@ -94,20 +94,15 @@ public class CommandListener {
                 case READ -> {
                     switch (request.getEntityType()) {
                         case "AUFFUEHRUNG" -> response = auffuehrungService.handleAuffuehrungRequest(((Number) entity).longValue());
+                        case "AUFFUEHRUNGSLISTE" -> response = auffuehrungService.handleAuffuehrungRequestAll();
                         case "FILM" -> response = filmService.handleFilmRequest(((Number) entity).longValue());
+                        case "FILMLISTE" -> response = filmService.handleFilmRequestAll();
                         case "KINO" -> response = kinoService.handleKinoRequest();
                         case "KUNDE" -> response = kundeService.handleKundeRequest(((Number) entity).longValue());
+                        case "KUNDENLISTE" -> response = kundeService.handleKundeRequestAll();
                         case "RESERVIERUNG" -> response = reservierungService.handleReservierungRequest(((Number) entity).longValue());
+                        case "RESERVIERUNGSLISTE" -> response = reservierungService.handleReservierungRequestAll();
                         default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für READ", "");
-                    }
-                }
-                case READ_ALL -> {
-                    switch (request.getEntityType()) {
-                        case "AUFFUEHRUNG" -> response = auffuehrungService.handleAuffuehrungRequestAll();
-                        case "FILM" -> response = filmService.handleFilmRequestAll();
-                        case "KUNDE" -> response = kundeService.handleKundeRequestAll();
-                        case "RESERVIERUNG" -> response = reservierungService.handleReservierungRequestAll();
-                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für READ_ALL", "");
                     }
                 }
                 case UPDATE -> {

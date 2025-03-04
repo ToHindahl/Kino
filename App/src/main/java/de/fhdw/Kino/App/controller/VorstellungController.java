@@ -44,14 +44,8 @@ public class VorstellungController {
 
     // Endpunkt zum Abrufen aller Aufführungen
     @GetMapping("/auffuehrungen")
-    public List<AuffuehrungDTO> getAuffuehrung(
-            @RequestParam(name = "datum", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate datum) {
+    public List<AuffuehrungDTO> getAuffuehrung() {
         List<AuffuehrungDTO> auffuehrungDTOs = auffuehrungService.getAllAuffuehrungen();
-
-        if(datum != null) {
-            return auffuehrungDTOs.stream().filter(a -> a.getStartzeit().toLocalDate().equals(datum)).toList();
-        }
-
         return auffuehrungDTOs;
     }
 

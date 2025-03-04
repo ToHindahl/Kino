@@ -24,6 +24,8 @@ public class KinosaalDTO implements Serializable {
     @NonNull
     private List<SitzreiheDTO> sitzreihen;
 
+    private Long version;
+
     @Override
     public String toString() {
         return "KinosaalDTO{" +
@@ -32,4 +34,6 @@ public class KinosaalDTO implements Serializable {
                 ", sitzreihen=" + (sitzreihen != null ? sitzreihen.size() : 0) + " sitzreihen" +
                 '}';
     }
+
+
 }

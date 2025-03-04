@@ -21,7 +21,7 @@ public class FilmService {
         UUID transactionId = UUID.randomUUID();
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "KINO", null));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType() == "null") {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType().equals("null")) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
@@ -40,13 +40,13 @@ public class FilmService {
         UUID transactionId = UUID.randomUUID();
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "KINO", null));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType() == "null") {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType().equals("null")) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
         }
 
-        CommandResponse filmeResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ_ALL, "FILM", null));
+        CommandResponse filmeResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "FILMLISTE", null));
         if(filmeResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(filmeResponse.getMessage());
         }
@@ -72,7 +72,7 @@ public class FilmService {
             throw new RuntimeException(filmresponse.getMessage());
         }
 
-        CommandResponse auffuehrungenResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ_ALL, "AUFFUEHRUNG", null));
+        CommandResponse auffuehrungenResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "AUFFUEHRUNGSLISTE", null));
         if(auffuehrungenResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(auffuehrungenResponse.getMessage());
         }

@@ -28,6 +28,8 @@ public class SitzreiheDTO implements Serializable {
     @NonNull
     private List<SitzplatzDTO> sitzplaetze;
 
+    private Long version;
+
     public enum SitzreihenTypDTO {
         LOGE_MIT_SERVICE(15.0),
         LOGE(10.0),

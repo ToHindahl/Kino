@@ -15,4 +15,6 @@ public class FilmDTO implements Serializable {
 
     @NonNull
     private String titel;
+
+    private Long version;
 }

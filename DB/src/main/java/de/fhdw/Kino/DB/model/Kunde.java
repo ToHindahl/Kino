@@ -24,7 +24,10 @@ public class Kunde {
     @NotNull(message = "E-Mail darf nicht leer sein.")
     private String email;
 
+    @Version
+    private Long version;
+
     public KundeDTO toDTO() {
-        return new KundeDTO(this.kundeId, this.vorname, this.nachname, this.email);
+        return new KundeDTO(this.kundeId, this.vorname, this.nachname, this.email, this.getVersion());
     }
 }

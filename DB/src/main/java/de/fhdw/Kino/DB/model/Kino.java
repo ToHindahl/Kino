@@ -25,15 +25,18 @@ public class Kino {
     @Valid
     private List<Kinosaal> kinosaele = new ArrayList<>();
 
+    @Version
+    private Long version;
+
     public KinoDTO toDTO() {
-        KinoDTO kinoDTO = new KinoDTO(this.kinoId, this.name, new ArrayList<>());
+        KinoDTO kinoDTO = new KinoDTO(this.kinoId, this.name, new ArrayList<>(), this.getVersion());
 
         this.getKinosaele().forEach(kinosaal -> {
-            KinosaalDTO kinosaalDTO = new KinosaalDTO(kinosaal.getKinosaalId(), kinosaal.getName(), kinoDTO, new ArrayList<>());
+            KinosaalDTO kinosaalDTO = new KinosaalDTO(kinosaal.getKinosaalId(), kinosaal.getName(), kinoDTO, new ArrayList<>(), this.getVersion());
             kinosaal.getSitzreihen().forEach(reihe -> {
-                SitzreiheDTO sitzreiheDTO = new SitzreiheDTO(reihe.getSitzreiheId(), reihe.getSitzreihenTypDTO(), reihe.getBezeichnung(), kinosaalDTO, new ArrayList<>());
+                SitzreiheDTO sitzreiheDTO = new SitzreiheDTO(reihe.getSitzreiheId(), reihe.getSitzreihenTypDTO(), reihe.getBezeichnung(), kinosaalDTO, new ArrayList<>(), this.getVersion());
                 reihe.getSitzplaetze().forEach(sitzplatz -> {
-                    SitzplatzDTO sitzplatzDTO = new SitzplatzDTO(sitzplatz.getSitzplatzId(), sitzplatz.getNummer(), sitzreiheDTO);
+                    SitzplatzDTO sitzplatzDTO = new SitzplatzDTO(sitzplatz.getSitzplatzId(), sitzplatz.getNummer(), sitzreiheDTO, this.getVersion());
                     sitzreiheDTO.getSitzplaetze().add(sitzplatzDTO);
                 });
                 kinosaalDTO.getSitzreihen().add(sitzreiheDTO);

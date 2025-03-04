@@ -36,7 +36,10 @@ public class Kinosaal {
     @Valid
     private List<Sitzreihe> sitzreihen = new ArrayList<>();
 
+    @Version
+    private Long version;
+
     public KinosaalDTO toDTO() {
-        return new KinosaalDTO(this.kinosaalId, this.name, this.kino.toDTO(), this.sitzreihen.stream().map(Sitzreihe::toDTO).toList());
+        return new KinosaalDTO(this.kinosaalId, this.name, this.kino.toDTO(), this.sitzreihen.stream().map(Sitzreihe::toDTO).toList(), this.getVersion());
     }
 }

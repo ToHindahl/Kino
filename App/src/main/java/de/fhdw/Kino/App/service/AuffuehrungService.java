@@ -5,7 +5,6 @@ import de.fhdw.Kino.Lib.command.CommandRequest;
 import de.fhdw.Kino.Lib.command.CommandResponse;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuffuehrungService {
@@ -39,7 +37,6 @@ public class AuffuehrungService {
             throw new RuntimeException("Aufführung muss in der Zukunft liegen");
         }
 
-        // TODO: Anpassen? --> Ist der Status SUCCESS && EntityType "null" möglich?
         CommandResponse filmResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "FILM", dto.getFilmId()));
         if(filmResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && filmResponse.getEntityType().equals("null")) {
             throw new RuntimeException("Film nicht gefunden");
@@ -47,7 +44,7 @@ public class AuffuehrungService {
             throw new RuntimeException(filmResponse.getMessage());
         }
 
-        CommandResponse auffuehrungenResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ_ALL, "AUFFUEHRUNG", null));
+        CommandResponse auffuehrungenResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "AUFFUEHRUNGSLISTE", null));
         if(auffuehrungenResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(auffuehrungenResponse.getMessage());
         }
@@ -76,7 +73,7 @@ public class AuffuehrungService {
             throw new RuntimeException(kinoResponse.getMessage());
         }
 
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ_ALL, "AUFFUEHRUNG", null));
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "AUFFUEHRUNGLISTE", null));
         if (response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.getMessage());
         }
@@ -102,7 +99,7 @@ public class AuffuehrungService {
             throw new RuntimeException(auffuehrungResponse.getMessage());
         }
 
-        CommandResponse reservierungenResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ_ALL, "RESERVIERUNG", null));
+        CommandResponse reservierungenResponse = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.READ, "RESERVIERUNGSLISTE", null));
         if(reservierungenResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(reservierungenResponse.getMessage());
         }
@@ -112,9 +109,8 @@ public class AuffuehrungService {
             throw new RuntimeException("Aufführung kann nicht gelöscht werden, da es noch Reservierungen gibt");
         }
 
-        commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.DELETE, "AUFFUEHRUNG", auffuehrungResponse.getEntity()));
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.DELETE, "AUFFUEHRUNG", auffuehrungResponse));
 
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(transactionId, CommandRequest.Operation.COMMIT, "COMMIT", null));
         if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.getMessage());
         }

@@ -36,6 +36,9 @@ public class Reservierung {
     @NotNull(message = "Reservierungsstatus darf nicht leer sein.")
     private ReservierungsStatus reservierungsStatus;
 
+    @Version
+    private Long version;
+
     public enum ReservierungsStatus {
         RESERVIERT,
         GEBUCHT,
@@ -60,7 +63,7 @@ public class Reservierung {
 
     public ReservierungDTO toDTO() {
         return new ReservierungDTO(this.reservierungId, this.sitzplatzIds, this.auffuehrung.getAuffuehrungId(),
-                this.kunde.getKundeId(), this.getReservierungsStatusDTO());
+                this.kunde.getKundeId(), this.getReservierungsStatusDTO(), this.getVersion());
     }
 }
 
