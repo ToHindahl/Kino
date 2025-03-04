@@ -4,19 +4,16 @@ import de.fhdw.Kino.DB.model.Auffuehrung;
 import de.fhdw.Kino.DB.model.Kunde;
 import de.fhdw.Kino.DB.model.Reservierung;
 import de.fhdw.Kino.DB.repository.AuffuehrungRepository;
-import de.fhdw.Kino.DB.repository.KinoRepository;
 import de.fhdw.Kino.DB.repository.KundeRepository;
 import de.fhdw.Kino.DB.repository.ReservierungRepository;
 import de.fhdw.Kino.Lib.command.CommandResponse;
 import de.fhdw.Kino.Lib.dto.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ReservierungService {
@@ -24,7 +21,6 @@ public class ReservierungService {
     private final ReservierungRepository reservierungRepository;
     private final KundeRepository kundeRepository;
     private final AuffuehrungRepository auffuehrungRepository;
-    private final KinoRepository kinoRepository;
 
     @Transactional
     public CommandResponse handleReservierungCreation(ReservierungDTO dto) {
@@ -49,15 +45,15 @@ public class ReservierungService {
         }
 
         reservierungRepository.save(reservierung);
-        log.info("Reservierung erstellt: " + reservierung.toDTO());
         return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created", "reservierung", reservierung.toDTO());
     }
 
     @Transactional
     public CommandResponse handleReservierungUpdate(ReservierungDTO dto) {
+
         Optional<Reservierung> reservierung = reservierungRepository.findById(dto.getReservierungId());
         if(reservierung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "not found", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null");
         }
 
         if(!dto.getVersion().equals(reservierung.get().getVersion())) {
@@ -82,9 +78,10 @@ public class ReservierungService {
 
     @Transactional
     public CommandResponse handleReservierungDeletion(ReservierungDTO dto) {
+
         Optional<Reservierung> reservierung = reservierungRepository.findById(dto.getReservierungId());
         if(reservierung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "not found", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null");
         }
 
         if(!dto.getVersion().equals(reservierung.get().getVersion())) {

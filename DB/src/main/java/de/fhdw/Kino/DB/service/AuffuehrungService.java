@@ -3,7 +3,6 @@ package de.fhdw.Kino.DB.service;
 import de.fhdw.Kino.DB.model.Auffuehrung;
 import de.fhdw.Kino.DB.model.Film;
 import de.fhdw.Kino.DB.model.Kinosaal;
-import de.fhdw.Kino.DB.model.Kunde;
 import de.fhdw.Kino.DB.repository.AuffuehrungRepository;
 import de.fhdw.Kino.DB.repository.FilmRepository;
 import de.fhdw.Kino.DB.repository.KinoRepository;
@@ -54,6 +53,7 @@ public class AuffuehrungService {
 
     @Transactional
     public CommandResponse handleAuffuehrungDeletion(AuffuehrungDTO dto) {
+
         Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(dto.getAuffuehrungId());
         if(auffuehrung.isEmpty()) {
             return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null");

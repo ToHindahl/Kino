@@ -1,7 +1,6 @@
 package de.fhdw.Kino.DB.service;
 
 import de.fhdw.Kino.DB.model.Kunde;
-import de.fhdw.Kino.DB.model.Reservierung;
 import de.fhdw.Kino.DB.repository.KundeRepository;
 import de.fhdw.Kino.Lib.command.CommandResponse;
 import de.fhdw.Kino.Lib.dto.KundeDTO;
@@ -42,6 +41,7 @@ public class KundeService {
 
     @Transactional
     public CommandResponse handleKundeDeletion(KundeDTO dto) {
+
         Optional<Kunde> kunde = kundeRepository.findById(dto.getKundeId());
         if(kunde.isEmpty()) {
             return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null");

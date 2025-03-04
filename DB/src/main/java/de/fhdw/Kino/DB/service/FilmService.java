@@ -39,6 +39,16 @@ public class FilmService {
 
     @Transactional
     public CommandResponse handleFilmDeletion(FilmDTO dto) {
+
+        Optional<Film> film = filmRepository.findById(dto.getFilmId());
+        if(film.isEmpty()){
+            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null");
+        }
+
+        if(!dto.getVersion().equals(film.get().getVersion())) {
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", "null");
+        }
+
         filmRepository.deleteById(dto.getFilmId());
         return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "deleted", "null");
     }
