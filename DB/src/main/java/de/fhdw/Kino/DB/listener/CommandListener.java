@@ -154,9 +154,6 @@ public class CommandListener {
                 case "AUFFUEHRUNG" -> {
                     return objectMapper.convertValue(entityMap, AuffuehrungDTO.class);
                 }
-                case "BEGINN" -> {
-                    return objectMapper.convertValue(entityMap, objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
-                }
                 default -> throw new IllegalArgumentException("Unbekannter Entity-Typ: " + entityType);
             }
         } catch (IllegalArgumentException e) {

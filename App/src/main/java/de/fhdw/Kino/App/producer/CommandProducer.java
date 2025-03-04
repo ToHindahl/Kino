@@ -49,18 +49,14 @@ public class CommandProducer {
         try {
             return switch (entityType) {
                 case "reservierung" -> objectMapper.convertValue(entity, ReservierungDTO.class);
-                case "reservierungsListe" -> objectMapper.convertValue(entity,
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, ReservierungDTO.class));
+                case "reservierungsListe" -> objectMapper.convertValue(entity, objectMapper.getTypeFactory().constructCollectionType(List.class, ReservierungDTO.class));
                 case "kino" -> objectMapper.convertValue(entity, KinoDTO.class);
                 case "kunde" -> objectMapper.convertValue(entity, KundeDTO.class);
-                case "kundenListe" -> objectMapper.convertValue(entity,
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, KundeDTO.class));
+                case "kundenListe" -> objectMapper.convertValue(entity, objectMapper.getTypeFactory().constructCollectionType(List.class, KundeDTO.class));
                 case "film" -> objectMapper.convertValue(entity, FilmDTO.class);
-                case "filmListe" -> objectMapper.convertValue(entity,
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, FilmDTO.class));
+                case "filmListe" -> objectMapper.convertValue(entity, objectMapper.getTypeFactory().constructCollectionType(List.class, FilmDTO.class));
                 case "auffuehrung" -> objectMapper.convertValue(entity, AuffuehrungDTO.class);
-                case "auffuehrungsListe" -> objectMapper.convertValue(entity,
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, AuffuehrungDTO.class));
+                case "auffuehrungsListe" -> objectMapper.convertValue(entity, objectMapper.getTypeFactory().constructCollectionType(List.class, AuffuehrungDTO.class));
                 case "null" -> null;
                 default -> throw new IllegalArgumentException("Unbekannter Entity-Typ: " + entityType);
             };
