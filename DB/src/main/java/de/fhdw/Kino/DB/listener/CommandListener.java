@@ -53,7 +53,7 @@ public class CommandListener {
             response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "",  null);
         }
 
-        // Rücksendung der Response an App und Stats
+        // Rücksendung der Response an App
         String replyTo = message.getMessageProperties().getReplyTo();
         String correlationId = message.getMessageProperties().getCorrelationId();
         if (replyTo != null && correlationId != null) {
@@ -61,6 +61,7 @@ public class CommandListener {
                 m.getMessageProperties().setCorrelationId(correlationId);
                 return m;
             });
+            // Rücksendung der Response an Fanout
             rabbitTemplate.convertAndSend(RabbitMQConfig.RESPONSE_FANOUT_EXCHANGE, "", response, m -> {
                 m.getMessageProperties().setCorrelationId(correlationId);
                 return m;
