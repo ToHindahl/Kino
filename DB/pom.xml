@@ -44,13 +44,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- H2 In-Memory Datenbank für Tests -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- Jakarta Validation API -->
         <dependency>
             <groupId>jakarta.validation</groupId>

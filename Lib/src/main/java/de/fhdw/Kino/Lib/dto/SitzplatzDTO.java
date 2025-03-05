@@ -3,10 +3,7 @@ package de.fhdw.Kino.Lib.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import java.io.Serializable;
-
 @Data
-@RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString

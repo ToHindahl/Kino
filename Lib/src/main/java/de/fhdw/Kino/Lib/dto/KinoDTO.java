@@ -2,11 +2,10 @@ package de.fhdw.Kino.Lib.dto;
 
 import lombok.*;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
 public class KinoDTO extends DTO {
@@ -15,7 +14,7 @@ public class KinoDTO extends DTO {
 
     private String name;
 
-    private List<KinosaalDTO> kinosaele;
+    private List<KinosaalDTO> kinosaele = new ArrayList<>();
 
     private Long version;
 

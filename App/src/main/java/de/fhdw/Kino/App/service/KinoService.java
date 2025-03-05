@@ -18,7 +18,7 @@ public class KinoService {
     public KinoDTO createKino(KinoDTO dto){
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && !kinoResponse.getResponseEntityType().equals("null")) {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && !kinoResponse.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Kino bereits initialisiert");
         } else if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
@@ -36,7 +36,7 @@ public class KinoService {
     public KinoDTO getKino() {
 
         CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
-        if (response.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && response.getResponseEntityType().equals("null")) {
+        if (response.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && response.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if (response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.getMessage());
@@ -50,7 +50,7 @@ public class KinoService {
     public void deleteKino() {
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals("null")) {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());

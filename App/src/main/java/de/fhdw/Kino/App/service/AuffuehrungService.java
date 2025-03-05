@@ -21,7 +21,7 @@ public class AuffuehrungService {
     public AuffuehrungDTO createAuffuehrung(AuffuehrungDTO dto){
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals("null")) {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
@@ -36,7 +36,7 @@ public class AuffuehrungService {
         }
 
         CommandResponse filmResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.FILM, new FilmDTO(dto.getFilmId(), null, null)));
-        if(filmResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && filmResponse.getResponseEntityType().equals("null")) {
+        if(filmResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && filmResponse.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Film nicht gefunden");
         } else if(filmResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(filmResponse.getMessage());
@@ -64,7 +64,7 @@ public class AuffuehrungService {
     public List<AuffuehrungDTO> getAllAuffuehrungen() {
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals("null")) {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
@@ -82,14 +82,14 @@ public class AuffuehrungService {
     public void deleteAuffuehrung(Long id) {
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals("null")) {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
         }
 
         CommandResponse auffuehrungResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.AUFFUEHRUNG, new AuffuehrungDTO(id, null, null, null, null, null)));
-        if(auffuehrungResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && auffuehrungResponse.getResponseEntityType().equals("null")) {
+        if(auffuehrungResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && auffuehrungResponse.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Aufführung nicht gefunden");
         } else if(auffuehrungResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(auffuehrungResponse.getMessage());

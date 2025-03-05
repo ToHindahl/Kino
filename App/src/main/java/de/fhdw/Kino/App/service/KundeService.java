@@ -20,7 +20,7 @@ public class KundeService {
     public KundeDTO createKunde(KundeDTO dto){
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals("null")) {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
@@ -38,7 +38,7 @@ public class KundeService {
     public List<KundeDTO> getAllKunden() {
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals("null")) {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
@@ -56,14 +56,14 @@ public class KundeService {
     public void deleteKunde(Long id) {
 
         CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals("null")) {
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
         }
 
         CommandResponse kundeResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KUNDE, new KundeDTO(id, null, null, null, null)));
-        if (kundeResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kundeResponse.getResponseEntityType().equals("null")) {
+        if (kundeResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kundeResponse.getResponseEntityType().equals(CommandResponse.ResponseEntityType.EMPTY)) {
             throw new RuntimeException("Kunde nicht gefunden");
         } else if(kundeResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kundeResponse.getMessage());

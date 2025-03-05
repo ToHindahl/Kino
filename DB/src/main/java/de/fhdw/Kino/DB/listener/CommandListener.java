@@ -1,7 +1,5 @@
 package de.fhdw.Kino.DB.listener;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.fhdw.Kino.DB.config.RabbitMQConfig;
 import de.fhdw.Kino.DB.service.*;
 import de.fhdw.Kino.Lib.command.CommandRequest;
@@ -16,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedHashMap;
 
 @Slf4j
 @Component
@@ -49,8 +46,8 @@ public class CommandListener {
         try {
             response = processCommandRequest(request);
         } catch (Exception e) {
-            log.error("Fehler beim Verarbeiten der Nachricht: " + e.getMessage(), e);
-            response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "",  null);
+            log.error("Fehler beim Verarbeiten der Nachricht: {}", e.getMessage(), e);
+            response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), CommandResponse.ResponseEntityType.EMPTY);
         }
 
         // Rücksendung der Response an App
@@ -71,14 +68,11 @@ public class CommandListener {
 
     private CommandResponse processCommandRequest(CommandRequest request) {
 
-        log.info("DB-Modul: CRUD-Request empfangen - " + request.toString());
+        log.info("DB-Modul: CRUD-Request empfangen - {}", request.toString());
 
         CommandResponse response;
         try {
             Object entity = request.getEntity();
-            if (entity instanceof LinkedHashMap) {
-                entity = deserializeEntity((LinkedHashMap<?, ?>) entity, request.getRequestEntityType());
-            }
 
             switch (request.getOperation()) {
                 case CREATE -> {
@@ -88,7 +82,7 @@ public class CommandListener {
                         case KINO -> response = kinoService.handleKinoCreation((KinoDTO) entity);
                         case KUNDE -> response = kundeService.handleKundeCreation((KundeDTO) entity);
                         case RESERVIERUNG -> response = reservierungService.handleReservierungCreation((ReservierungDTO) entity);
-                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für CREATE", "");
+                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für CREATE", CommandResponse.ResponseEntityType.EMPTY);
                     }
                 }
                 case READ -> {
@@ -126,14 +120,14 @@ public class CommandListener {
                                 response = reservierungService.handleReservierungRequestAll();
                             }
                         }
-                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für READ", "");
+                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für READ", CommandResponse.ResponseEntityType.EMPTY);
                     }
                 }
                 case UPDATE -> {
                     if (request.getRequestEntityType().equals(CommandRequest.RequestEntityType.RESERVIERUNG)) {
                         response = reservierungService.handleReservierungUpdate((ReservierungDTO) entity);
                     } else {
-                        response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "UPDATE nicht implementiert", "");
+                        response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "UPDATE nicht implementiert", CommandResponse.ResponseEntityType.EMPTY);
                     }
                 }
                 case DELETE -> {
@@ -143,28 +137,17 @@ public class CommandListener {
                         case KINO -> response = kinoService.handleKinoReset();
                         case KUNDE -> response = kundeService.handleKundeDeletion((KundeDTO) entity);
                         case RESERVIERUNG -> response = reservierungService.handleReservierungDeletion((ReservierungDTO) entity);
-                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für DELETE", "");
+                        default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für DELETE", CommandResponse.ResponseEntityType.EMPTY);
                     }
                 }
-                default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Unbekannte Operation", "");
+                default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Unbekannte Operation", CommandResponse.ResponseEntityType.EMPTY);
             }
         } catch (Exception e) {
-            log.error("Fehler beim Verarbeiten der Nachricht: " + e.getMessage(), e);
-            response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), "");
+            log.error("Fehler beim Verarbeiten der Nachricht: {}", e.getMessage(), e);
+            response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Fehler bei der Verarbeitung: " + e.getMessage(), CommandResponse.ResponseEntityType.EMPTY);
         }
 
         return response;
     }
 
-    private DTO deserializeEntity(LinkedHashMap<?, ?> entityMap, CommandRequest.RequestEntityType requestEntityType) {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
-        try {
-            return objectMapper.convertValue(entityMap, requestEntityType.DTOclass);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Fehler beim Deserialisieren des entity-Felds: " + e.getMessage(), e);
-        }
-    }
 }

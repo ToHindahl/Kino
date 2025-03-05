@@ -3,11 +3,10 @@ package de.fhdw.Kino.Lib.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
 public class KinosaalDTO extends DTO {
@@ -19,7 +18,7 @@ public class KinosaalDTO extends DTO {
     @JsonIgnore
     private KinoDTO kino;
 
-    private List<SitzreiheDTO> sitzreihen;
+    private List<SitzreiheDTO> sitzreihen = new ArrayList<>();
 
     private Long version;
 

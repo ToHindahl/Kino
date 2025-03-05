@@ -2,11 +2,9 @@ package de.fhdw.Kino.Lib.dto;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Data
-@RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString

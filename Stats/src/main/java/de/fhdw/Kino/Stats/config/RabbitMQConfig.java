@@ -1,7 +1,12 @@
 package de.fhdw.Kino.Stats.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import de.fhdw.Kino.Lib.command.CommandRequest;
+import de.fhdw.Kino.Lib.command.CommandRequestDeserializer;
+import de.fhdw.Kino.Lib.command.CommandResponse;
+import de.fhdw.Kino.Lib.command.CommandResponseDeserializer;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -51,7 +56,16 @@ public class RabbitMQConfig {
     @Bean
     public MessageConverter jsonMessageConverter() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // Register JavaTimeModule
+        objectMapper.registerModule(new JavaTimeModule());
+
+        SimpleModule module = new SimpleModule();
+
+        module.addDeserializer(CommandRequest.class, new CommandRequestDeserializer());
+        objectMapper.registerModule(module);
+
+        module.addDeserializer(CommandResponse.class, new CommandResponseDeserializer());
+        objectMapper.registerModule(module);
+
         return new Jackson2JsonMessageConverter(objectMapper);
     }
 

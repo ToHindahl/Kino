@@ -1,16 +1,16 @@
 spring:
   datasource:
-    url: jdbc:h2:file:./kino-db # H2-Datenbank (kann durch MySQL/PostgreSQL ersetzt werden)
-    username: sa
-    password: password
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://hindahl.de:3306/d0427da7
+    username: d0427da7
+    password: DxQoSo5YVdPXm9kJWLBN
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update # Automatisches Schema-Update
-    show-sql: true # SQL-Ausgaben in der Konsole anzeigen
-    properties:
-      hibernate:
-        format_sql: true # SQL-Ausgaben formatieren
+      ddl-auto: update
+    show-sql: true
+
   rabbitmq:
     host: 192.168.0.45 # Externe IP des Servers, auf dem RabbitMQ läuft
     port: 5672 # RabbitMQ-Port
