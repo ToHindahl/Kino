@@ -10,14 +10,12 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class SitzplatzDTO implements Serializable {
+public class SitzplatzDTO extends DTO {
 
     private Long sitzplatzId;
 
-    @NonNull
     private int nummer;
 
-    @NonNull
     @JsonIgnore
     private SitzreiheDTO sitzreihe;
 

@@ -25,18 +25,18 @@ public class KundeService {
         kunde.setNachname(dto.getNachname());
         kunde.setEmail(dto.getEmail());
         kundeRepository.save(kunde);
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "success", "kunde", kunde.toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "success", CommandResponse.ResponseEntityType.KUNDE, kunde.toDTO());
     }
 
     @Transactional
     public CommandResponse handleKundeRequest(Long id) {
         Optional<Kunde> kunde = kundeRepository.findById(id);
-        return kunde.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "kunde", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null"));
+        return kunde.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", CommandResponse.ResponseEntityType.KUNDE, value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", CommandResponse.ResponseEntityType.EMPTY));
     }
 
     @Transactional
     public CommandResponse handleKundeRequestAll() {
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"found", "kundenListe", kundeRepository.findAll().stream().map(Kunde::toDTO).toList());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"found", CommandResponse.ResponseEntityType.KUNDENLISTE, kundeRepository.findAll().stream().map(Kunde::toDTO).toList());
     }
 
     @Transactional
@@ -44,14 +44,14 @@ public class KundeService {
 
         Optional<Kunde> kunde = kundeRepository.findById(dto.getKundeId());
         if(kunde.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", CommandResponse.ResponseEntityType.EMPTY);
         }
 
         if(!dto.getVersion().equals(kunde.get().getVersion())) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", CommandResponse.ResponseEntityType.EMPTY);
         }
 
         kundeRepository.deleteById(dto.getKundeId());
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"deleted", "null");
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"deleted", CommandResponse.ResponseEntityType.EMPTY);
     }
 }

@@ -10,17 +10,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ReservierungDTO implements Serializable {
+public class ReservierungDTO extends DTO {
 
     private Long reservierungId;
 
-    @NonNull
     private List<Long> sitzplatzIds;
 
-    @NonNull
     private Long auffuehrungId;
 
-    @NonNull
     private Long kundeId;
 
     private ReservierungsStatusDTO reservierungsStatus;

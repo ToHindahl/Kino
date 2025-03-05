@@ -45,7 +45,7 @@ public class ReservierungService {
         }
 
         reservierungRepository.save(reservierung);
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created", "reservierung", reservierung.toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created", CommandResponse.ResponseEntityType.RESERVIERUNG, reservierung.toDTO());
     }
 
     @Transactional
@@ -53,27 +53,27 @@ public class ReservierungService {
 
         Optional<Reservierung> reservierung = reservierungRepository.findById(dto.getReservierungId());
         if(reservierung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", CommandResponse.ResponseEntityType.EMPTY);
         }
 
         if(!dto.getVersion().equals(reservierung.get().getVersion())) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", CommandResponse.ResponseEntityType.EMPTY);
         }
 
         reservierung.get().setReservierungsStatus(reservierung.get().getReservierungsStatusFromDTO(dto.getReservierungsStatus()));
         reservierungRepository.save(reservierung.get());
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "updated", "reservierung", reservierung.get().toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "updated", CommandResponse.ResponseEntityType.RESERVIERUNG, reservierung.get().toDTO());
     }
 
     @Transactional
     public CommandResponse handleReservierungRequest(Long id) {
         Optional<Reservierung> reservierung = reservierungRepository.findById(id);
-        return reservierung.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "reservierung", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null"));
+        return reservierung.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", CommandResponse.ResponseEntityType.RESERVIERUNG, value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", CommandResponse.ResponseEntityType.EMPTY));
     }
 
     @Transactional
     public CommandResponse handleReservierungRequestAll() {
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"found", "reservierungsListe", reservierungRepository.findAll().stream().map(Reservierung::toDTO).toList());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"found", CommandResponse.ResponseEntityType.RESERVIERUNGSLISTE, reservierungRepository.findAll().stream().map(Reservierung::toDTO).toList());
     }
 
     @Transactional
@@ -81,15 +81,15 @@ public class ReservierungService {
 
         Optional<Reservierung> reservierung = reservierungRepository.findById(dto.getReservierungId());
         if(reservierung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", CommandResponse.ResponseEntityType.EMPTY);
         }
 
         if(!dto.getVersion().equals(reservierung.get().getVersion())) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", CommandResponse.ResponseEntityType.EMPTY);
         }
 
         reservierungRepository.deleteById(dto.getReservierungId());
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"deleted", "null");
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"deleted", CommandResponse.ResponseEntityType.EMPTY);
     }
 
 }

@@ -25,8 +25,8 @@ public class ReservierungService {
             throw new RuntimeException("Keine Sitzplätze ausgewählt");
         }
 
-        CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, "KINO", null));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType().equals("null")) {
+        CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals("null")) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
@@ -34,8 +34,8 @@ public class ReservierungService {
 
         KinoDTO kino = (KinoDTO) kinoResponse.getEntity();
 
-        CommandResponse auffuehrungResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, "AUFFUEHRUNG", dto.getAuffuehrungId()));
-        if (auffuehrungResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && auffuehrungResponse.getEntityType().equals("null")) {
+        CommandResponse auffuehrungResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.AUFFUEHRUNG, new AuffuehrungDTO(dto.getAuffuehrungId(), null, null, null, null, null)));
+        if (auffuehrungResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && auffuehrungResponse.getResponseEntityType().equals("null")) {
             throw new RuntimeException("Aufführung nicht gefunden");
         } else if(auffuehrungResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(auffuehrungResponse.getMessage());
@@ -46,14 +46,14 @@ public class ReservierungService {
             throw new RuntimeException("Aufführung noch nicht gestartet");
         }
 
-        CommandResponse kundeResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, "KUNDE", dto.getKundeId()));
-        if (kundeResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kundeResponse.getEntityType().equals("null")) {
+        CommandResponse kundeResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KUNDE, new KundeDTO(dto.getKundeId(), null, null, null, null)));
+        if (kundeResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kundeResponse.getResponseEntityType().equals("null")) {
             throw new RuntimeException("Kunde nicht gefunden");
         } else if(kundeResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kundeResponse.getMessage());
         }
 
-        CommandResponse reservierungenResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, "RESERVIERUNGSLISTE", null));
+        CommandResponse reservierungenResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.RESERVIERUNG, new ReservierungDTO()));
         if(reservierungenResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(reservierungenResponse.getMessage());
         }
@@ -75,7 +75,7 @@ public class ReservierungService {
             throw new RuntimeException("Sitzplatz nicht verfügbar");
         }
 
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.CREATE, "RESERVIERUNG", dto));
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.CREATE, CommandRequest.RequestEntityType.RESERVIERUNG, dto));
         if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.getMessage());
         }
@@ -86,15 +86,15 @@ public class ReservierungService {
     @Transactional
     public ReservierungDTO bookReservierung(Long id) {
 
-        CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, "KINO", null));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType().equals("null")) {
+        CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals("null")) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
         }
 
-        CommandResponse reservierungResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, "RESERVIERUNG", id));
-        if (reservierungResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && reservierungResponse.getEntityType().equals("null")) {
+        CommandResponse reservierungResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.RESERVIERUNG, new ReservierungDTO(id, null, null, null, null, null)));
+        if (reservierungResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && reservierungResponse.getResponseEntityType().equals("null")) {
             throw new RuntimeException("Reservierung nicht gefunden");
         } else if(reservierungResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(reservierungResponse.getMessage());
@@ -107,7 +107,7 @@ public class ReservierungService {
 
         reservierung.setReservierungsStatus(ReservierungDTO.ReservierungsStatusDTO.GEBUCHT);
 
-        CommandResponse reservierungCreateResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.UPDATE, "RESERVIERUNG", reservierung));
+        CommandResponse reservierungCreateResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.UPDATE, CommandRequest.RequestEntityType.RESERVIERUNG, reservierung));
         if(reservierungCreateResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(reservierungCreateResponse.getMessage());
         }
@@ -118,15 +118,15 @@ public class ReservierungService {
     @Transactional
     public ReservierungDTO cancelReservierung(Long id) {
 
-        CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, "KINO", null));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType().equals("null")) {
+        CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals("null")) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
         }
 
-        CommandResponse reservierungResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, "RESERVIERUNG", id));
-        if (reservierungResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && reservierungResponse.getEntityType().equals("null")) {
+        CommandResponse reservierungResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.RESERVIERUNG, new ReservierungDTO(id, null, null, null, null, null)));
+        if (reservierungResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && reservierungResponse.getResponseEntityType().equals("null")) {
             throw new RuntimeException("Reservierung nicht gefunden");
         } else if(reservierungResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(reservierungResponse.getMessage());
@@ -139,7 +139,7 @@ public class ReservierungService {
 
         reservierung.setReservierungsStatus(ReservierungDTO.ReservierungsStatusDTO.STORNIERT);
 
-        CommandResponse reservierungCreateResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.UPDATE, "RESERVIERUNG", reservierung));
+        CommandResponse reservierungCreateResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.UPDATE, CommandRequest.RequestEntityType.RESERVIERUNG, reservierung));
         if(reservierungCreateResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(reservierungCreateResponse.getMessage());
         }
@@ -150,14 +150,14 @@ public class ReservierungService {
     @Transactional
     public List<ReservierungDTO> getReservierungen() {
 
-        CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, "KINO", null));
-        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getEntityType().equals("null")) {
+        CommandResponse kinoResponse = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.KINO, new KinoDTO()));
+        if (kinoResponse.getStatus().equals(CommandResponse.CommandStatus.SUCCESS) && kinoResponse.getResponseEntityType().equals("null")) {
             throw new RuntimeException("Kino noch nicht initialisiert");
         } else if(kinoResponse.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(kinoResponse.getMessage());
         }
 
-        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, "RESERVIERUNGSLISTE", null));
+        CommandResponse response = commandProducer.sendCommandRequest(new CommandRequest(CommandRequest.Operation.READ, CommandRequest.RequestEntityType.RESERVIERUNG, new ReservierungDTO()));
         if(response.getStatus().equals(CommandResponse.CommandStatus.ERROR)) {
             throw new RuntimeException(response.getMessage());
         }

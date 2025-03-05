@@ -9,14 +9,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
-public class KinoDTO implements Serializable {
+public class KinoDTO extends DTO {
 
     private Long kinoId;
 
-    @NonNull
     private String name;
 
-    @NonNull
     private List<KinosaalDTO> kinosaele;
 
     private Long version;
@@ -29,5 +27,4 @@ public class KinoDTO implements Serializable {
                 ", kinosaele=" + (kinosaele.size()) + " kinosaele" +
                 '}';
     }
-
 }

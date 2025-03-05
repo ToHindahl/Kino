@@ -9,11 +9,10 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class FilmDTO implements Serializable {
+public class FilmDTO extends DTO {
 
     private Long filmId;
 
-    @NonNull
     private String titel;
 
     private Long version;

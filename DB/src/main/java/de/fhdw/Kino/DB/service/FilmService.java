@@ -23,18 +23,18 @@ public class FilmService {
         Film film = new Film();
         film.setTitel(dto.getTitel());
         filmRepository.save(film);
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"success", "film", film.toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"success", CommandResponse.ResponseEntityType.FILM, film.toDTO());
     }
 
     @Transactional
     public CommandResponse handleFilmRequest(Long id) {
         Optional<Film> film = filmRepository.findById(id);
-        return film.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "film", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null"));
+        return film.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", CommandResponse.ResponseEntityType.FILM, value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", CommandResponse.ResponseEntityType.EMPTY));
     }
 
     @Transactional
     public CommandResponse handleFilmRequestAll() {
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"found", "filmListe", filmRepository.findAll().stream().map(Film::toDTO).toList());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"found", CommandResponse.ResponseEntityType.FILMLISTE, filmRepository.findAll().stream().map(Film::toDTO).toList());
     }
 
     @Transactional
@@ -42,14 +42,14 @@ public class FilmService {
 
         Optional<Film> film = filmRepository.findById(dto.getFilmId());
         if(film.isEmpty()){
-            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", CommandResponse.ResponseEntityType.EMPTY);
         }
 
         if(!dto.getVersion().equals(film.get().getVersion())) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", CommandResponse.ResponseEntityType.EMPTY);
         }
 
         filmRepository.deleteById(dto.getFilmId());
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "deleted", "null");
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "deleted", CommandResponse.ResponseEntityType.EMPTY);
     }
 }

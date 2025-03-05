@@ -37,18 +37,18 @@ public class AuffuehrungService {
         auffuehrung.setEndzeit(dto.getEndzeit());
 
         auffuehrungRepository.save(auffuehrung);
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"created", "auffuehrung", auffuehrung.toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS,"created", CommandResponse.ResponseEntityType.AUFFUEHRUNG, auffuehrung.toDTO());
     }
 
     @Transactional
     public CommandResponse handleAuffuehrungRequest(Long id) {
         Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(id);
-        return auffuehrung.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "auffuehrung", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null"));
+        return auffuehrung.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", CommandResponse.ResponseEntityType.AUFFUEHRUNG, value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", CommandResponse.ResponseEntityType.EMPTY));
     }
 
     @Transactional
     public CommandResponse handleAuffuehrungRequestAll() {
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "auffuehrungsListe", auffuehrungRepository.findAll().stream().map(Auffuehrung::toDTO).toList());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", CommandResponse.ResponseEntityType.AUFFUEHRUNGSLISTE, auffuehrungRepository.findAll().stream().map(Auffuehrung::toDTO).toList());
     }
 
     @Transactional
@@ -56,14 +56,14 @@ public class AuffuehrungService {
 
         Optional<Auffuehrung> auffuehrung = auffuehrungRepository.findById(dto.getAuffuehrungId());
         if(auffuehrung.isEmpty()) {
-            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "not found", CommandResponse.ResponseEntityType.EMPTY);
         }
 
         if(!dto.getVersion().equals(auffuehrung.get().getVersion())) {
-            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", "null");
+            return new CommandResponse(CommandResponse.CommandStatus.ERROR, "version mismatch", CommandResponse.ResponseEntityType.EMPTY);
         }
 
         auffuehrungRepository.deleteById(dto.getAuffuehrungId());
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "deleted", "null");
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "deleted", CommandResponse.ResponseEntityType.EMPTY);
     }
 }

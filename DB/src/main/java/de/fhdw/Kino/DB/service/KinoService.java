@@ -55,13 +55,13 @@ public class KinoService {
         });
 
         kinoRepository.save(kino);
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created","kino", kino.toDTO());
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "created", CommandResponse.ResponseEntityType.KINO, kino.toDTO());
     }
 
     @Transactional
     public CommandResponse handleKinoRequest() {
         Optional<Kino> kino = kinoRepository.findAll().stream().findFirst();
-        return kino.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", "kino", value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "null", "null"));
+        return kino.map(value -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "found", CommandResponse.ResponseEntityType.KINO, value.toDTO())).orElseGet(() -> new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "null", CommandResponse.ResponseEntityType.EMPTY));
     }
 
     @Transactional
@@ -72,6 +72,6 @@ public class KinoService {
         reservierungRepository.deleteAll();
         auffuehrungRepository.deleteAll();
         filmRepository.deleteAll();
-        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "reset", "null");
+        return new CommandResponse(CommandResponse.CommandStatus.SUCCESS, "reset", CommandResponse.ResponseEntityType.EMPTY);
     }
 }

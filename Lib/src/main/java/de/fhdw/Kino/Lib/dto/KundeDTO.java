@@ -9,19 +9,15 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class KundeDTO  implements Serializable {
+public class KundeDTO extends DTO {
 
     private Long kundeId;
 
-    @NonNull
     private String vorname;
 
-    @NonNull
     private String nachname;
 
-    @NonNull
     private String email;
 
     private Long version;
-
 }

@@ -10,18 +10,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
-public class KinosaalDTO implements Serializable {
+public class KinosaalDTO extends DTO {
 
     private Long kinosaalId;
 
-    @NonNull
     private String name;
 
     @JsonIgnore
-    @NonNull
     private KinoDTO kino;
 
-    @NonNull
     private List<SitzreiheDTO> sitzreihen;
 
     private Long version;
@@ -34,6 +31,4 @@ public class KinosaalDTO implements Serializable {
                 ", sitzreihen=" + (sitzreihen.size()) + " sitzreihen" +
                 '}';
     }
-
-
 }

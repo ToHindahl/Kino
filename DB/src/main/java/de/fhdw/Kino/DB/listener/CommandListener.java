@@ -77,48 +77,72 @@ public class CommandListener {
         try {
             Object entity = request.getEntity();
             if (entity instanceof LinkedHashMap) {
-                entity = deserializeEntity((LinkedHashMap<?, ?>) entity, request.getEntityType());
+                entity = deserializeEntity((LinkedHashMap<?, ?>) entity, request.getRequestEntityType());
             }
 
             switch (request.getOperation()) {
                 case CREATE -> {
-                    switch (request.getEntityType()) {
-                        case "AUFFUEHRUNG" -> response = auffuehrungService.handleAuffuehrungCreation((AuffuehrungDTO) entity);
-                        case "FILM" -> response = filmService.handleFilmCreation((FilmDTO) entity);
-                        case "KINO" -> response = kinoService.handleKinoCreation((KinoDTO) entity);
-                        case "KUNDE" -> response = kundeService.handleKundeCreation((KundeDTO) entity);
-                        case "RESERVIERUNG" -> response = reservierungService.handleReservierungCreation((ReservierungDTO) entity);
+                    switch (request.getRequestEntityType()) {
+                        case AUFFUEHRUNG -> response = auffuehrungService.handleAuffuehrungCreation((AuffuehrungDTO) entity);
+                        case FILM -> response = filmService.handleFilmCreation((FilmDTO) entity);
+                        case KINO -> response = kinoService.handleKinoCreation((KinoDTO) entity);
+                        case KUNDE -> response = kundeService.handleKundeCreation((KundeDTO) entity);
+                        case RESERVIERUNG -> response = reservierungService.handleReservierungCreation((ReservierungDTO) entity);
                         default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für CREATE", "");
                     }
                 }
                 case READ -> {
-                    switch (request.getEntityType()) {
-                        case "AUFFUEHRUNG" -> response = auffuehrungService.handleAuffuehrungRequest(((Number) entity).longValue());
-                        case "AUFFUEHRUNGSLISTE" -> response = auffuehrungService.handleAuffuehrungRequestAll();
-                        case "FILM" -> response = filmService.handleFilmRequest(((Number) entity).longValue());
-                        case "FILMLISTE" -> response = filmService.handleFilmRequestAll();
-                        case "KINO" -> response = kinoService.handleKinoRequest();
-                        case "KUNDE" -> response = kundeService.handleKundeRequest(((Number) entity).longValue());
-                        case "KUNDENLISTE" -> response = kundeService.handleKundeRequestAll();
-                        case "RESERVIERUNG" -> response = reservierungService.handleReservierungRequest(((Number) entity).longValue());
-                        case "RESERVIERUNGSLISTE" -> response = reservierungService.handleReservierungRequestAll();
+                    switch (request.getRequestEntityType()) {
+                        case AUFFUEHRUNG -> {
+                            AuffuehrungDTO dto = (AuffuehrungDTO) request.getEntity();
+                            if(dto.getAuffuehrungId() != null) {
+                                response = auffuehrungService.handleAuffuehrungRequest(dto.getAuffuehrungId());
+                            } else {
+                                response = auffuehrungService.handleAuffuehrungRequestAll();
+                            }
+                        }
+                        case FILM -> {
+                            FilmDTO dto = (FilmDTO) request.getEntity();
+                            if(dto.getFilmId() != null) {
+                                response = filmService.handleFilmRequest(dto.getFilmId());
+                            } else {
+                                response = filmService.handleFilmRequestAll();
+                            }
+                        }
+                        case KINO -> response = kinoService.handleKinoRequest();
+                        case KUNDE -> {
+                            KundeDTO dto = (KundeDTO) request.getEntity();
+                            if(dto.getKundeId() != null) {
+                                response = kundeService.handleKundeRequest(dto.getKundeId());
+                            } else {
+                                response = kundeService.handleKundeRequestAll();
+                            }
+                        }
+                        case RESERVIERUNG -> {
+                            ReservierungDTO dto = (ReservierungDTO) request.getEntity();
+                            if(dto.getReservierungId() != null) {
+                                response = reservierungService.handleReservierungRequest(dto.getReservierungId());
+                            } else {
+                                response = reservierungService.handleReservierungRequestAll();
+                            }
+                        }
                         default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für READ", "");
                     }
                 }
                 case UPDATE -> {
-                    if (request.getEntityType().equals("RESERVIERUNG")) {
+                    if (request.getRequestEntityType().equals(CommandRequest.RequestEntityType.RESERVIERUNG)) {
                         response = reservierungService.handleReservierungUpdate((ReservierungDTO) entity);
                     } else {
                         response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "UPDATE nicht implementiert", "");
                     }
                 }
                 case DELETE -> {
-                    switch (request.getEntityType()) {
-                        case "AUFFUEHRUNG" -> response = auffuehrungService.handleAuffuehrungDeletion((AuffuehrungDTO) entity);
-                        case "FILM" -> response = filmService.handleFilmDeletion((FilmDTO) entity);
-                        case "KINO" -> response = kinoService.handleKinoReset();
-                        case "KUNDE" -> response = kundeService.handleKundeDeletion((KundeDTO) entity);
-                        case "RESERVIERUNG" -> response = reservierungService.handleReservierungDeletion((ReservierungDTO) entity);
+                    switch (request.getRequestEntityType()) {
+                        case AUFFUEHRUNG -> response = auffuehrungService.handleAuffuehrungDeletion((AuffuehrungDTO) entity);
+                        case FILM -> response = filmService.handleFilmDeletion((FilmDTO) entity);
+                        case KINO -> response = kinoService.handleKinoReset();
+                        case KUNDE -> response = kundeService.handleKundeDeletion((KundeDTO) entity);
+                        case RESERVIERUNG -> response = reservierungService.handleReservierungDeletion((ReservierungDTO) entity);
                         default -> response = new CommandResponse(CommandResponse.CommandStatus.ERROR, "Ungültiger EntityType für DELETE", "");
                     }
                 }
@@ -132,30 +156,13 @@ public class CommandListener {
         return response;
     }
 
-    private Object deserializeEntity(LinkedHashMap<?, ?> entityMap, String entityType) {
+    private DTO deserializeEntity(LinkedHashMap<?, ?> entityMap, CommandRequest.RequestEntityType requestEntityType) {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
         try {
-            switch (entityType) {
-                case "RESERVIERUNG" -> {
-                    return objectMapper.convertValue(entityMap, ReservierungDTO.class);
-                }
-                case "KINO" -> {
-                    return objectMapper.convertValue(entityMap, KinoDTO.class);
-                }
-                case "KUNDE" -> {
-                    return objectMapper.convertValue(entityMap, KundeDTO.class);
-                }
-                case "FILM" -> {
-                    return objectMapper.convertValue(entityMap, FilmDTO.class);
-                }
-                case "AUFFUEHRUNG" -> {
-                    return objectMapper.convertValue(entityMap, AuffuehrungDTO.class);
-                }
-                default -> throw new IllegalArgumentException("Unbekannter Entity-Typ: " + entityType);
-            }
+            return objectMapper.convertValue(entityMap, requestEntityType.DTOclass);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Fehler beim Deserialisieren des entity-Felds: " + e.getMessage(), e);
         }

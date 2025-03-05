@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.fhdw.Kino.Lib.command.CommandRequest;
 import de.fhdw.Kino.Lib.command.CommandResponse;
+import de.fhdw.Kino.Lib.command.EntityType;
 import de.fhdw.Kino.Lib.dto.*;
 import de.fhdw.Kino.Stats.config.RabbitMQConfig;
 import de.fhdw.Kino.Stats.service.KinoService;
@@ -53,12 +54,12 @@ public class StatsListener {
             if(response.getStatus().equals(CommandResponse.CommandStatus.SUCCESS)) {
                 switch (request.getOperation()) {
                     case CREATE -> {
-                        switch (response.getEntityType()) {
-                            case "kino" -> kinoService.createKino((KinoDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
-                            case "auffuehrung" -> kinoService.addAuffuehrung((AuffuehrungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
-                            case "film" -> kinoService.addFilm((FilmDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType()));
-                            case "reservierung" -> {
-                                ReservierungDTO reservierungDTO = (ReservierungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType());
+                        switch (response.getResponseEntityType()) {
+                            case KINO -> kinoService.createKino((KinoDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getResponseEntityType()));
+                            case AUFFUEHRUNG -> kinoService.addAuffuehrung((AuffuehrungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getResponseEntityType()));
+                            case FILM -> kinoService.addFilm((FilmDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getResponseEntityType()));
+                            case RESERVIERUNG -> {
+                                ReservierungDTO reservierungDTO = (ReservierungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getResponseEntityType());
                                 if(reservierungDTO.getReservierungsStatus().equals(ReservierungDTO.ReservierungsStatusDTO.GEBUCHT)) {
                                     kinoService.addReservierung(reservierungDTO);
                                 }
@@ -66,18 +67,18 @@ public class StatsListener {
                         }
                     }
                     case UPDATE -> {
-                        if(response.getEntityType().equals("reservierung")) {
-                            ReservierungDTO reservierungDTO = (ReservierungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType());
+                        if(response.getResponseEntityType().equals(CommandResponse.ResponseEntityType.RESERVIERUNG)) {
+                            ReservierungDTO reservierungDTO = (ReservierungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getResponseEntityType());
                             if(reservierungDTO.getReservierungsStatus().equals(ReservierungDTO.ReservierungsStatusDTO.GEBUCHT)) {
                                 kinoService.addReservierung(reservierungDTO);
                             }
                         }
                     }
                     case DELETE -> {
-                        switch (request.getEntityType()) {
-                            case "FILM" -> kinoService.deleteFilm(((FilmDTO) deserializeEntity((LinkedHashMap<?, ?>) request.getEntity(), request.getEntityType())).getFilmId());
-                            case "AUFFUEHRUNG" -> kinoService.deleteAuffuehrung(((AuffuehrungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getEntityType())).getAuffuehrungId());
-                            case "KINO" -> kinoService.reset();
+                        switch (request.getRequestEntityType()) {
+                            case FILM -> kinoService.deleteFilm(((FilmDTO) deserializeEntity((LinkedHashMap<?, ?>) request.getEntity(), request.getRequestEntityType())).getFilmId());
+                            case AUFFUEHRUNG -> kinoService.deleteAuffuehrung(((AuffuehrungDTO) deserializeEntity((LinkedHashMap<?, ?>) response.getEntity(), response.getResponseEntityType())).getAuffuehrungId());
+                            case KINO -> kinoService.reset();
                         }
                     }
                 }
@@ -87,32 +88,25 @@ public class StatsListener {
         }
     }
 
-    private Object deserializeEntity(LinkedHashMap<?, ?> entityMap, String entityType) {
+    private DTO deserializeEntity(LinkedHashMap<?, ?> entityMap, EntityType entityType) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-
         try {
-            switch (entityType) {
-                case "reservierung" -> {
-                    return objectMapper.convertValue(entityMap, ReservierungDTO.class);
-                }
-                case "kino" -> {
-                    return objectMapper.convertValue(entityMap, KinoDTO.class);
-                }
-                case "kunde" -> {
-                    return objectMapper.convertValue(entityMap, KundeDTO.class);
-                }
-                case "film", "FILM" -> {
-                    return objectMapper.convertValue(entityMap, FilmDTO.class);
-                }
-                case "auffuehrung", "AUFFUEHRUNG" -> {
-                    return objectMapper.convertValue(entityMap, AuffuehrungDTO.class);
-                }
-                default -> throw new IllegalArgumentException("Unbekannter Entity-Typ: " + entityType);
+            if(entityType instanceof CommandRequest.RequestEntityType) {
+                return switch ((CommandRequest.RequestEntityType) entityType) {
+                    case FILM, AUFFUEHRUNG -> objectMapper.convertValue(entityMap, entityType.DTOclass);
+                    default -> throw new IllegalArgumentException("Unbekannter Entity-Typ: " + entityType);
+                };
+            } else if (entityType instanceof CommandResponse.ResponseEntityType) {
+                return switch ((CommandResponse.ResponseEntityType) entityType) {
+                    case KINO, RESERVIERUNG, AUFFUEHRUNG, FILM, KUNDE -> objectMapper.convertValue(entityMap, entityType.DTOclass);
+                    default -> throw new IllegalArgumentException("Unbekannter Entity-Typ: " + entityType);
+                };
             }
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Fehler beim Deserialisieren des entity-Felds: " + e.getMessage(), e);
         }
+        return null;
     }
 }
 

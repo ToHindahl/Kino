@@ -11,22 +11,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class AuffuehrungDTO implements Serializable {
+public class AuffuehrungDTO extends DTO {
 
     private Long auffuehrungId;
 
-    @NonNull
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startzeit;
 
-    @NonNull
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endzeit;
 
-    @NonNull
     private Long filmId;
 
-    @NonNull
     private Long kinosaalId;
 
     private Long version;
